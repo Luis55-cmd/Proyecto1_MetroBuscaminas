@@ -22,7 +22,7 @@ public class Ventana1 extends javax.swing.JFrame {
      * Creates new form Ventana1
      */
     public Ventana1() {
-
+        setTitle("MetroBuscaminas");
         initComponents();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
@@ -61,13 +61,14 @@ public class Ventana1 extends javax.swing.JFrame {
 
         JPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        iniciar.setFont(new java.awt.Font("Segoe UI Black", 0, 18)); // NOI18N
         iniciar.setText("INICIAR");
         iniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 iniciarActionPerformed(evt);
             }
         });
-        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 140, 90, 40));
+        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 140, 110, 50));
 
         on.setText("Music ON");
         on.addActionListener(new java.awt.event.ActionListener() {
