@@ -6,6 +6,9 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import java.net.URL;
+
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -41,15 +44,13 @@ public class Ventana1 extends javax.swing.JFrame {
         this.repaint();
         // Play Audio  File        
         try {
-            String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Proyecto1_MetroBuscaminas\\src\\Musica\\lo.wav";
-            AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
-            try {
-                clip = AudioSystem.getClip();
-                clip.open(aui);
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            } catch (IOException | LineUnavailableException e) {
-            }
-        } catch (IOException | UnsupportedAudioFileException e) {
+            URL audioPath = getClass().getClassLoader().getResource("Musica/song.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioPath);
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
 
     }
@@ -122,17 +123,15 @@ public class Ventana1 extends javax.swing.JFrame {
             on.setIcon(fondo2);
 
             on.setText("Music ON");
-            // Play Audio  File        
+            // Play Audio  File           
             try {
-                String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
-                AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
-                try {
-                    clip = AudioSystem.getClip();
-                    clip.open(aui);
-                    clip.loop(Clip.LOOP_CONTINUOUSLY);
-                } catch (IOException | LineUnavailableException e) {
-                }
-            } catch (IOException | UnsupportedAudioFileException e) {
+                URL audioPath = getClass().getClassLoader().getResource("Musica/song.wav");
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioPath);
+                clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
             }
 
         }

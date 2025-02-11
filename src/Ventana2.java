@@ -1,4 +1,5 @@
 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -245,16 +247,15 @@ public class Ventana2 extends javax.swing.JFrame {
 
             on.setText("Music ON");
             // Play Audio  File        
+            // Play Audio  File        
             try {
-                String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
-                AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
-                try {
-                    v1.clip = AudioSystem.getClip();
-                    v1.clip.open(aui);
-                    v1.clip.loop(Clip.LOOP_CONTINUOUSLY);
-                } catch (IOException | LineUnavailableException e) {
-                }
-            } catch (IOException | UnsupportedAudioFileException e) {
+                URL audioPath = getClass().getClassLoader().getResource("Musica/song.wav");
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioPath);
+                v1.clip = AudioSystem.getClip();
+                v1.clip.open(audioStream);
+                v1.clip.start();
+            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
             }
 
         }
