@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
  */
 public class Ventana1 extends javax.swing.JFrame {
 
-    private Clip clip;
+    public static Clip clip;
 
     /**
      * Creates new form Ventana1
@@ -41,7 +41,7 @@ public class Ventana1 extends javax.swing.JFrame {
         this.repaint();
         // Play Audio  File        
         try {
-            String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
+            String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Proyecto1_MetroBuscaminas\\src\\Musica\\lo.wav";
             AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
             try {
                 clip = AudioSystem.getClip();

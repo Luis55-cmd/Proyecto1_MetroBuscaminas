@@ -7,6 +7,13 @@ import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -32,6 +39,7 @@ public class Ventana2 extends javax.swing.JFrame {
     private JButton[][] casillasdeltablero; // Matriz de botones
      */
     private JButton[][] casillasdeltablero;
+    public static Ventana1 v1;
 
     /**
      * Creates new form Ventana2
@@ -42,6 +50,12 @@ public class Ventana2 extends javax.swing.JFrame {
         setTitle("MetroBuscaminas");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Centra la ventana en la pantalla
+        ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
+        Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
+        on.setIcon(fondo2);
+        on.setOpaque(false);
+        on.setBorder(null);
+        on.setBackground(new Color(0, 0, 0, 0));
 
     }
 
@@ -100,6 +114,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
             }
         }
+
         panelTablero.revalidate();
         panelTablero.repaint();
 
@@ -132,7 +147,7 @@ public class Ventana2 extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JSeparator();
         panelSuperior = new javax.swing.JPanel();
         crear = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        on = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         m = new javax.swing.JTextField();
@@ -175,11 +190,16 @@ public class Ventana2 extends javax.swing.JFrame {
         });
         panelSuperior.add(crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 92, 80));
 
-        jButton5.setText("jButton5");
-        panelSuperior.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(549, 6, -1, 42));
+        on.setText("Music ON");
+        on.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onActionPerformed(evt);
+            }
+        });
+        panelSuperior.add(on, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, 50, 40));
 
         jButton6.setText("jButton6");
-        panelSuperior.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 50, -1, 43));
+        panelSuperior.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 60, -1, 43));
         panelSuperior.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
         panelSuperior.add(m, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 110, -1));
 
@@ -204,6 +224,43 @@ public class Ventana2 extends javax.swing.JFrame {
         iniciarJuego();
 
     }//GEN-LAST:event_crearActionPerformed
+
+    private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
+
+        if (on.getText() == "Music ON") {
+
+            ImageIcon salir3 = new ImageIcon(getClass().getResource("/Imagenes/OFF.png"));
+            Icon fondo3 = new ImageIcon(salir3.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
+            on.setIcon(fondo3);
+
+            on.setText("Music OFF");
+            if (v1.clip != null && v1.clip.isRunning()) {
+                v1.clip.stop();
+            }
+
+        } else if (on.getText() == "Music OFF") {
+            ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
+            Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
+            on.setIcon(fondo2);
+
+            on.setText("Music ON");
+            // Play Audio  File        
+            try {
+                String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
+                AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
+                try {
+                    v1.clip = AudioSystem.getClip();
+                    v1.clip.open(aui);
+                    v1.clip.loop(Clip.LOOP_CONTINUOUSLY);
+                } catch (IOException | LineUnavailableException e) {
+                }
+            } catch (IOException | UnsupportedAudioFileException e) {
+            }
+
+        }
+
+
+    }//GEN-LAST:event_onActionPerformed
 
     /**
      * @param args the command line arguments
@@ -244,7 +301,6 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JTextField c;
     private javax.swing.JButton crear;
     private javax.swing.JTextField f;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -252,6 +308,7 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField m;
+    private javax.swing.JButton on;
     private javax.swing.JPanel panelDerecha;
     private javax.swing.JPanel panelSuperior;
     private javax.swing.JPanel panelTablero;
