@@ -31,7 +31,6 @@ public class Ventana2 extends javax.swing.JFrame {
     private int filas = 10, columnas = 10; // Tamaño de la matriz
     private JButton[][] casillasdeltablero; // Matriz de botones
      */
-    private int filas = 10, columnas = 10;
     private JButton[][] casillasdeltablero;
 
     /**
@@ -41,27 +40,43 @@ public class Ventana2 extends javax.swing.JFrame {
 
         initComponents();
         setTitle("MetroBuscaminas");
-
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Centra la ventana en la pantalla
-        
-        cargarCasillas();
 
     }
 
-    public void cargarCasillas() {
+    public void iniciarJuego() {
+
+        try {
+            int filas = Integer.parseInt(f.getText());
+            int columnas = Integer.parseInt(c.getText());
+            int minas = Integer.parseInt(m.getText());
+
+            if (filas < 3 || filas > 10 || columnas < 3 || columnas > 10 || minas < 1 || minas >= filas * columnas) {
+                throw new IllegalArgumentException("Valores fuera de rango");
+            }
+
+            cargarCasillas(filas, columnas, minas);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void cargarCasillas(int filas, int columnas, int minas) {
 
         int posXreferencia = 25;
         int posYreferencia = 25;
         int anchoCasilla = 40;
         int altoCasilla = 40;
         Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
-        
+        panelTablero.removeAll();
         casillasdeltablero = new JButton[filas][columnas];
         for (int i = 0; i < casillasdeltablero.length; i++) {
             for (int j = 0; j < casillasdeltablero[i].length; j++) {
                 casillasdeltablero[i][j] = new JButton();
                 casillasdeltablero[i][j].setName(i + "," + j);
-                
+
                 if (i == 0 && j == 0) {
                     casillasdeltablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
                 } else if (i == 0 && j != 0) {
@@ -85,7 +100,8 @@ public class Ventana2 extends javax.swing.JFrame {
 
             }
         }
-        
+        panelTablero.revalidate();
+        panelTablero.repaint();
 
     }
 
@@ -113,111 +129,81 @@ public class Ventana2 extends javax.swing.JFrame {
 
         panelTablero = new javax.swing.JPanel();
         panelDerecha = new javax.swing.JPanel();
-        pala = new javax.swing.JButton();
-        banderaroja = new javax.swing.JButton();
-        banderablanca = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
         panelSuperior = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        crear = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        m = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        f = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        c = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         javax.swing.GroupLayout panelTableroLayout = new javax.swing.GroupLayout(panelTablero);
         panelTablero.setLayout(panelTableroLayout);
         panelTableroLayout.setHorizontalGroup(
             panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 440, Short.MAX_VALUE)
         );
         panelTableroLayout.setVerticalGroup(
             panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 490, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout panelDerechaLayout = new javax.swing.GroupLayout(panelDerecha);
-        panelDerecha.setLayout(panelDerechaLayout);
-        panelDerechaLayout.setHorizontalGroup(
-            panelDerechaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDerechaLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(panelDerechaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pala)
-                    .addComponent(banderaroja)
-                    .addComponent(banderablanca))
-                .addContainerGap(24, Short.MAX_VALUE))
-        );
-        panelDerechaLayout.setVerticalGroup(
-            panelDerechaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelDerechaLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(pala, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(banderaroja, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(banderablanca, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(289, Short.MAX_VALUE))
-        );
+        getContentPane().add(panelTablero, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 440, 490));
 
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        panelDerecha.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        panelDerecha.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -150, 50, 640));
+
+        getContentPane().add(panelDerecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 190, 490));
+
+        panelSuperior.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        crear.setText("Crear");
+        crear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                crearActionPerformed(evt);
             }
         });
+        panelSuperior.add(crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 92, 80));
 
-        javax.swing.GroupLayout panelSuperiorLayout = new javax.swing.GroupLayout(panelSuperior);
-        panelSuperior.setLayout(panelSuperiorLayout);
-        panelSuperiorLayout.setHorizontalGroup(
-            panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSuperiorLayout.createSequentialGroup()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(230, 230, 230)
-                .addGroup(panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(294, Short.MAX_VALUE))
-        );
-        panelSuperiorLayout.setVerticalGroup(
-            panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSuperiorLayout.createSequentialGroup()
-                .addGroup(panelSuperiorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelSuperiorLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(59, Short.MAX_VALUE))
-        );
+        jButton5.setText("jButton5");
+        panelSuperior.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(549, 6, -1, 42));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelTablero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelDerecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addComponent(panelSuperior, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelSuperior, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panelDerecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addComponent(panelTablero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
+        jButton6.setText("jButton6");
+        panelSuperior.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 50, -1, 43));
+        panelSuperior.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
+        panelSuperior.add(m, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 110, -1));
+
+        jLabel1.setText("Minas:");
+        panelSuperior.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, -1, -1));
+        panelSuperior.add(f, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 110, -1));
+
+        jLabel2.setText("Filas:");
+        panelSuperior.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
+        panelSuperior.add(c, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 40, 110, -1));
+
+        jLabel3.setText("Columnas:");
+        panelSuperior.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, -1, -1));
+
+        getContentPane().add(panelSuperior, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 110));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
+
+        iniciarJuego();
+
+    }//GEN-LAST:event_crearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -255,12 +241,17 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton banderablanca;
-    private javax.swing.JButton banderaroja;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton pala;
+    private javax.swing.JTextField c;
+    private javax.swing.JButton crear;
+    private javax.swing.JTextField f;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JTextField m;
     private javax.swing.JPanel panelDerecha;
     private javax.swing.JPanel panelSuperior;
     private javax.swing.JPanel panelTablero;

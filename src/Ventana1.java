@@ -39,6 +39,18 @@ public class Ventana1 extends javax.swing.JFrame {
         pantalla.setIcon(fondo5);
 
         this.repaint();
+        // Play Audio  File        
+        try {
+            String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
+            AudioInputStream aui = AudioSystem.getAudioInputStream(new File(filepath).getAbsoluteFile());
+            try {
+                clip = AudioSystem.getClip();
+                clip.open(aui);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } catch (IOException | LineUnavailableException e) {
+            }
+        } catch (IOException | UnsupportedAudioFileException e) {
+        }
 
     }
 
@@ -95,11 +107,21 @@ public class Ventana1 extends javax.swing.JFrame {
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
         if (on.getText() == "Music ON") {
 
+            ImageIcon salir3 = new ImageIcon(getClass().getResource("/Imagenes/OFF.png"));
+            Icon fondo3 = new ImageIcon(salir3.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
+            on.setIcon(fondo3);
+
+            on.setText("Music OFF");
+            if (clip != null && clip.isRunning()) {
+                clip.stop();
+            }
+
+        } else if (on.getText() == "Music OFF") {
             ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
             Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
             on.setIcon(fondo2);
 
-            on.setText("Music OFF");
+            on.setText("Music ON");
             // Play Audio  File        
             try {
                 String filepath = "C:\\Users\\Luis\\Documents\\NetBeansProjects\\Prepadurias2025\\src\\Musica\\lo.wav";
@@ -113,16 +135,6 @@ public class Ventana1 extends javax.swing.JFrame {
             } catch (IOException | UnsupportedAudioFileException e) {
             }
 
-        } else if (on.getText() == "Music OFF") {
-
-            ImageIcon salir3 = new ImageIcon(getClass().getResource("/Imagenes/OFF.png"));
-            Icon fondo3 = new ImageIcon(salir3.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
-            on.setIcon(fondo3);
-
-            on.setText("Music ON");
-            if (clip != null && clip.isRunning()) {
-                clip.stop();
-            }
         }
     }//GEN-LAST:event_onActionPerformed
 
