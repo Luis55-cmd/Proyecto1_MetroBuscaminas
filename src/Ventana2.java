@@ -64,7 +64,7 @@ public class Ventana2 extends javax.swing.JFrame {
         f.setText("3");
         c.setText("3");
         m.setText("3");
-        
+
     }
 
     void descargarControles() {
@@ -108,6 +108,7 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     private void crearTableroBuscaminas() {
+
         tableroBuscaminas = new TableroBuscaminas(Integer.parseInt(f.getText()), Integer.parseInt(c.getText()), Integer.parseInt(m.getText()));
         tableroBuscaminas.imprimirTablero(); //En la consola
 
@@ -129,8 +130,13 @@ public class Ventana2 extends javax.swing.JFrame {
         tableroBuscaminas.setEventoPartidaPerdida((ListaAdyacencia t) -> {
             NodoAdyacencia recorrer = t.cabeza;
             while (recorrer != null) {
-                botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText("*");
-
+                int i = recorrer.valor.getPosFila();
+                int j = recorrer.valor.getPosColumna();
+                botonesTablero[i][j].setIcon(null);
+                ImageIcon ca = new ImageIcon(getClass().getResource("/Imagenes/Bomba.png"));
+                Icon cb = new ImageIcon(ca.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBackground(new Color(139, 69, 19));
                 recorrer = recorrer.siguiente;
             }
             JOptionPane.showMessageDialog(null, "PISASTE UNA MINA");
@@ -147,11 +153,21 @@ public class Ventana2 extends javax.swing.JFrame {
         });
 
         tableroBuscaminas.setEventoPartidaGanada((ListaAdyacencia t) -> {
+
             NodoAdyacencia recorrer = t.cabeza;
             while (recorrer != null) {
-                botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText(":)");
+                int i = recorrer.valor.getPosFila();
+                int j = recorrer.valor.getPosColumna();
+
+                botonesTablero[i][j].setIcon(null);
+                ImageIcon ca = new ImageIcon(getClass().getResource("/Imagenes/Bomba.png"));
+                Icon cb = new ImageIcon(ca.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBackground(new Color(139, 69, 19));
+
                 recorrer = recorrer.siguiente;
             }
+
             JOptionPane.showMessageDialog(null, "PARTIDA GANADA!!");
 
         });
@@ -160,7 +176,18 @@ public class Ventana2 extends javax.swing.JFrame {
             botonesTablero[t.getPosFila()][t.getPosColumna()].setEnabled(false);
             botonesTablero[t.getPosFila()][t.getPosColumna()]
                     .setText(t.getNumMinasAlrededor() == 0 ? "" : t.getNumMinasAlrededor() + "");
+
+            //botonesTablero[t.getPosFila()][t.getPosColumna()].setIcon(null);
+            /*
+            ImageIcon c = new ImageIcon(getClass().getResource("/Imagenes/CasillaBloqueada.png"));
+                Icon cb = new ImageIcon(c.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+             */
         });
+        f.setText("");
+        c.setText("");
+        m.setText("");
 
     }
 
@@ -204,12 +231,11 @@ public class Ventana2 extends javax.swing.JFrame {
                 });
 
                 panelTablero.add(botonesTablero[i][j]);
-                
+
                 ImageIcon c = new ImageIcon(getClass().getResource("/Imagenes/CasillaBloqueada.png"));
                 Icon cb = new ImageIcon(c.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
-                 
 
             }
         }
@@ -234,12 +260,12 @@ public class Ventana2 extends javax.swing.JFrame {
         int columna = Integer.parseInt(coordenada[1]);
         JOptionPane.showMessageDialog(rootPane, fila + "," + columna);
         tableroBuscaminas.seleccionarCasilla(fila, columna);
+
         /*
         ImageIcon c2 = new ImageIcon(getClass().getResource("/Imagenes/CasillaDesbloqueada.png"));
         Icon cb2 = new ImageIcon(c2.getImage().getScaledInstance(btn.getWidth(), btn.getHeight(), 0));
         btn.setIcon(cb2);
          */
-
     }
 
     /**
