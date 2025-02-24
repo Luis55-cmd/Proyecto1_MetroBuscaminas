@@ -132,11 +132,13 @@ public class Ventana2 extends javax.swing.JFrame {
             while (recorrer != null) {
                 int i = recorrer.valor.getPosFila();
                 int j = recorrer.valor.getPosColumna();
+
                 botonesTablero[i][j].setIcon(null);
                 ImageIcon ca = new ImageIcon(getClass().getResource("/Imagenes/Bomba.png"));
                 Icon cb = new ImageIcon(ca.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBackground(new Color(139, 69, 19));
+
                 recorrer = recorrer.siguiente;
             }
             JOptionPane.showMessageDialog(null, "PISASTE UNA MINA");
@@ -173,16 +175,50 @@ public class Ventana2 extends javax.swing.JFrame {
         });
 
         tableroBuscaminas.setEventoCasillaAbierta((ObjetoCasilla t) -> {
-            botonesTablero[t.getPosFila()][t.getPosColumna()].setEnabled(false);
-            botonesTablero[t.getPosFila()][t.getPosColumna()]
-                    .setText(t.getNumMinasAlrededor() == 0 ? "" : t.getNumMinasAlrededor() + "");
-
-            //botonesTablero[t.getPosFila()][t.getPosColumna()].setIcon(null);
-            /*
-            ImageIcon c = new ImageIcon(getClass().getResource("/Imagenes/CasillaBloqueada.png"));
-                Icon cb = new ImageIcon(c.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+            int i = t.getPosFila();
+            int j = t.getPosColumna();
+            int k = t.getNumMinasAlrededor();
+            Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
+            botonesTablero[i][j].setEnabled(false);
+            botonesTablero[i][j]
+                    .setText(k == 0 ? "" : k + "");
+            botonesTablero[i][j].setIcon(null);
+            if (botonesTablero[i][j].getText().equals(Integer.toString(1))) {
+                botonesTablero[i][j].setText("");
+                ImageIcon uno = new ImageIcon(getClass().getResource("/Imagenes/uno.png"));
+                Icon cb = new ImageIcon(uno.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(2))) {
+                botonesTablero[i][j].setText("");
+                ImageIcon dos = new ImageIcon(getClass().getResource("/Imagenes/dos.png"));
+                Icon cb = new ImageIcon(dos.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(3))) {
+                botonesTablero[i][j].setText("");
+                ImageIcon tres = new ImageIcon(getClass().getResource("/Imagenes/tres.png"));
+                Icon cb = new ImageIcon(tres.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(4))) {
+                botonesTablero[i][j].setText("");
+                ImageIcon cuatro = new ImageIcon(getClass().getResource("/Imagenes/cuatro.png"));
+                Icon cb = new ImageIcon(cuatro.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+            } else {
+                botonesTablero[i][j].setText("");
+                ImageIcon cdb = new ImageIcon(getClass().getResource("/Imagenes/CasillaDesbloqueada.png"));
+                Icon cb = new ImageIcon(cdb.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+            }
+
+            System.out.println(botonesTablero[i][j].getText());
+
+            /*
+            
              */
         });
         f.setText("");
