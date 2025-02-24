@@ -1,3 +1,4 @@
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagLayout;
@@ -25,8 +26,9 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 /**
- * Ventana principal del juego MetroBuscaminas.
- * Permite al usuario configurar el tamaño del tablero y la cantidad de minas, e iniciar el juego.
+ * Ventana principal del juego MetroBuscaminas. Permite al usuario configurar el
+ * tamaño del tablero y la cantidad de minas, e iniciar el juego.
+ *
  * @author Luis, Zadkiel Avendano
  */
 public class Ventana2 extends javax.swing.JFrame {
@@ -34,15 +36,17 @@ public class Ventana2 extends javax.swing.JFrame {
     /**
      * Matriz de botones que representa el tablero del juego.
      */
-    private JButton[][] casillasdeltablero;
+    private JButton[][] botonesTablero;
+
+    TableroBuscaminas tableroBuscaminas;
     /**
      * Referencia a la ventana principal del juego (Ventana1).
      */
     public static Ventana1 v1;
 
     /**
-     * Constructor de la clase Ventana2.
-     * Inicializa los componentes de la ventana, establece el título.
+     * Constructor de la clase Ventana2. Inicializa los componentes de la
+     * ventana, establece el título.
      */
     public Ventana2() {
 
@@ -57,17 +61,32 @@ public class Ventana2 extends javax.swing.JFrame {
         on.setOpaque(false);
         on.setBorder(null);
         on.setBackground(new Color(0, 0, 0, 0));
+        f.setText("3");
+        c.setText("3");
+        m.setText("3");
+        
+    }
+
+    void descargarControles() {
+        if (botonesTablero != null) {
+            for (int i = 0; i < botonesTablero.length; i++) {
+                for (int j = 0; j < botonesTablero[i].length; j++) {
+                    if (botonesTablero[i][j] != null) {
+                        getContentPane().remove(botonesTablero[i][j]);
+                    }
+                }
+            }
+        }
 
     }
 
     /**
-     * Inicia el juego.
-     * Lee los valores de filas, columnas y minas de los campos de texto,
-     * valida que estén dentro de los rangos permitidos y llama al método
-     * {@link #cargarCasillas(int, int, int)} para crear el tablero.
+     * Inicia el juego. Lee los valores de filas, columnas y minas de los campos
+     * de texto, valida que estén dentro de los rangos permitidos y llama al
+     * método {@link #cargarCasillas(int, int, int)} para crear el tablero.
      * Muestra un mensaje de error si los valores ingresados no son válidos.
      */
-    public void iniciarJuego() {
+    private void juegoNuevo() {
 
         try {
             int filas = Integer.parseInt(f.getText());
@@ -77,24 +96,84 @@ public class Ventana2 extends javax.swing.JFrame {
             if (filas < 3 || filas > 10 || columnas < 3 || columnas > 10 || minas < 1 || minas > filas * columnas) {
                 throw new IllegalArgumentException("Valores fuera de rango");
             }
-
-            cargarCasillas(filas, columnas, minas);
+            descargarControles();
+            cargarCasillas();
+            crearTableroBuscaminas();
+            repaint();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+    }
+
+    private void crearTableroBuscaminas() {
+        tableroBuscaminas = new TableroBuscaminas(Integer.parseInt(f.getText()), Integer.parseInt(c.getText()), Integer.parseInt(m.getText()));
+        tableroBuscaminas.imprimirTablero(); //En la consola
+
+        //Sin Labmda expresion
+        /*
+        tableroBuscaminas.setEventoPartidaPerdida(new EventoPartidaPerdida() {
+            @Override
+            public void ejecutar(ListaAdyacencia t) {
+                NodoAdyacencia recorrer = t.cabeza;
+                while (recorrer != null) {
+                    botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText("*");
+                    recorrer = recorrer.siguiente;
+                }
+            }
+        
+        });
+         */
+        //Con Labmda expresion
+        tableroBuscaminas.setEventoPartidaPerdida((ListaAdyacencia t) -> {
+            NodoAdyacencia recorrer = t.cabeza;
+            while (recorrer != null) {
+                botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText("*");
+
+                recorrer = recorrer.siguiente;
+            }
+            JOptionPane.showMessageDialog(null, "PISASTE UNA MINA");
+
+        });
+        tableroBuscaminas.setEventoPartidaPerdida2((ListaAdyacencia t) -> {
+            NodoAdyacencia recorrer = t.cabeza;
+            while (recorrer != null) {
+                botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setEnabled(false);
+
+                recorrer = recorrer.siguiente;
+            }
+
+        });
+
+        tableroBuscaminas.setEventoPartidaGanada((ListaAdyacencia t) -> {
+            NodoAdyacencia recorrer = t.cabeza;
+            while (recorrer != null) {
+                botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText(":)");
+                recorrer = recorrer.siguiente;
+            }
+            JOptionPane.showMessageDialog(null, "PARTIDA GANADA!!");
+
+        });
+
+        tableroBuscaminas.setEventoCasillaAbierta((ObjetoCasilla t) -> {
+            botonesTablero[t.getPosFila()][t.getPosColumna()].setEnabled(false);
+            botonesTablero[t.getPosFila()][t.getPosColumna()]
+                    .setText(t.getNumMinasAlrededor() == 0 ? "" : t.getNumMinasAlrededor() + "");
+        });
+
     }
 
     /**
-     * Carga las casillas del tablero en el panel.
-     * Crea una matriz de botones con las dimensiones especificadas,
-     * establece su posición y tamaño, agrega un ActionListener a cada botón
-     * y los añade al panel.
+     * Carga las casillas del tablero en el panel. Crea una matriz de botones
+     * con las dimensiones especificadas, establece su posición y tamaño, agrega
+     * un ActionListener a cada botón y los añade al panel.
+     *
      * @param filas La cantidad de filas del tablero.
      * @param columnas La cantidad de columnas del tablero.
      * @param minas La cantidad de minas en el tablero.
      */
-    public void cargarCasillas(int filas, int columnas, int minas) {
+    public void cargarCasillas() {
 
         int posXreferencia = 25;
         int posYreferencia = 25;
@@ -102,32 +181,35 @@ public class Ventana2 extends javax.swing.JFrame {
         int altoCasilla = 40;
         Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
         panelTablero.removeAll();
-        casillasdeltablero = new JButton[filas][columnas];
-        for (int i = 0; i < casillasdeltablero.length; i++) {
-            for (int j = 0; j < casillasdeltablero[i].length; j++) {
-                casillasdeltablero[i][j] = new JButton();
-                casillasdeltablero[i][j].setName(i + "," + j);
+
+        botonesTablero = new JButton[Integer.parseInt(f.getText())][Integer.parseInt(c.getText())];
+        for (int i = 0; i < botonesTablero.length; i++) {
+            for (int j = 0; j < botonesTablero[i].length; j++) {
+                botonesTablero[i][j] = new JButton();
+                botonesTablero[i][j].setName(i + "," + j);
 
                 if (i == 0 && j == 0) {
-                    casillasdeltablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
+                    botonesTablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
                 } else if (i == 0 && j != 0) {
-                    casillasdeltablero[i][j].setBounds(casillasdeltablero[i][j - 1].getX() + casillasdeltablero[i][j - 1].getWidth(), posYreferencia, anchoCasilla, altoCasilla);
+                    botonesTablero[i][j].setBounds(botonesTablero[i][j - 1].getX() + botonesTablero[i][j - 1].getWidth(), posYreferencia, anchoCasilla, altoCasilla);
 
                 } else {
-                    casillasdeltablero[i][j].setBounds(casillasdeltablero[i - 1][j].getX(), casillasdeltablero[i - 1][j].getY() + casillasdeltablero[i - 1][j].getWidth(), anchoCasilla, altoCasilla);
+                    botonesTablero[i][j].setBounds(botonesTablero[i - 1][j].getX(), botonesTablero[i - 1][j].getY() + botonesTablero[i - 1][j].getWidth(), anchoCasilla, altoCasilla);
                 }
-                casillasdeltablero[i][j].addActionListener(new ActionListener() {
+                botonesTablero[i][j].addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         btnClick(e);
                     }
                 });
 
-                panelTablero.add(casillasdeltablero[i][j]);
+                panelTablero.add(botonesTablero[i][j]);
+                
                 ImageIcon c = new ImageIcon(getClass().getResource("/Imagenes/CasillaBloqueada.png"));
-                Icon cb = new ImageIcon(c.getImage().getScaledInstance(casillasdeltablero[i][j].getWidth(), casillasdeltablero[i][j].getHeight(), 0));
-                casillasdeltablero[i][j].setIcon(cb);
-                casillasdeltablero[i][j].setBorder(line);
+                Icon cb = new ImageIcon(c.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cb);
+                botonesTablero[i][j].setBorder(line);
+                 
 
             }
         }
@@ -138,9 +220,10 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     /**
-     * Maneja el evento de click en una casilla del tablero.
-     * Obtiene la fila y columna del botón clickeado, muestra un mensaje
-     * con las coordenadas y cambia el icono del botón.
+     * Maneja el evento de click en una casilla del tablero. Obtiene la fila y
+     * columna del botón clickeado, muestra un mensaje con las coordenadas y
+     * cambia el icono del botón.
+     *
      * @param e El evento de acción.
      */
     private void btnClick(ActionEvent e) {
@@ -150,9 +233,12 @@ public class Ventana2 extends javax.swing.JFrame {
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
         JOptionPane.showMessageDialog(rootPane, fila + "," + columna);
+        tableroBuscaminas.seleccionarCasilla(fila, columna);
+        /*
         ImageIcon c2 = new ImageIcon(getClass().getResource("/Imagenes/CasillaDesbloqueada.png"));
         Icon cb2 = new ImageIcon(c2.getImage().getScaledInstance(btn.getWidth(), btn.getHeight(), 0));
         btn.setIcon(cb2);
+         */
 
     }
 
@@ -186,12 +272,12 @@ public class Ventana2 extends javax.swing.JFrame {
         javax.swing.GroupLayout panelTableroLayout = new javax.swing.GroupLayout(panelTablero);
         panelTablero.setLayout(panelTableroLayout);
         panelTableroLayout.setHorizontalGroup(
-            panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 440, Short.MAX_VALUE)
+                panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 440, Short.MAX_VALUE)
         );
         panelTableroLayout.setVerticalGroup(
-            panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
+                panelTableroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 490, Short.MAX_VALUE)
         );
 
         getContentPane().add(panelTablero, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 440, 490));
@@ -243,23 +329,25 @@ public class Ventana2 extends javax.swing.JFrame {
     }// </editor-fold>                        
 
     /**
-     * Maneja el evento de click en el botón "Crear".
-     * Llama al método {@link #iniciarJuego()} para iniciar el juego.
+     * Maneja el evento de click en el botón "Crear". Llama al método
+     * {@link #iniciarJuego()} para iniciar el juego.
+     *
      * @param evt El evento de acción.
      */
-    private void crearActionPerformed(java.awt.event.ActionEvent evt) {                                      
+    private void crearActionPerformed(java.awt.event.ActionEvent evt) {
 
-        iniciarJuego();
+        juegoNuevo();
 
-    }                                     
+    }
 
     /**
      * Maneja el evento de click en el botón de encendido/apagado de la música.
      * Cambia el icono y el texto del botón, y detiene o inicia la reproducción
      * de la música según corresponda.
+     *
      * @param evt El evento de acción.
      */
-    private void onActionPerformed(java.awt.event.ActionEvent evt) {                                   
+    private void onActionPerformed(java.awt.event.ActionEvent evt) {
 
         if (on.getText() == "Music ON") {
 
@@ -290,7 +378,6 @@ public class Ventana2 extends javax.swing.JFrame {
             }
 
         }
-
 
     }
 
