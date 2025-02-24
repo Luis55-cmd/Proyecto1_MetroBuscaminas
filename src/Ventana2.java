@@ -129,6 +129,7 @@ public class Ventana2 extends javax.swing.JFrame {
         //Con Labmda expresion
         tableroBuscaminas.setEventoPartidaPerdida((ListaAdyacencia t) -> {
             NodoAdyacencia recorrer = t.cabeza;
+
             while (recorrer != null) {
                 int i = recorrer.valor.getPosFila();
                 int j = recorrer.valor.getPosColumna();
@@ -166,8 +167,9 @@ public class Ventana2 extends javax.swing.JFrame {
                 Icon cb = new ImageIcon(ca.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBackground(new Color(139, 69, 19));
-
+                botonesTablero[i][j].setEnabled(false);
                 recorrer = recorrer.siguiente;
+
             }
 
             JOptionPane.showMessageDialog(null, "PARTIDA GANADA!!");
@@ -183,30 +185,34 @@ public class Ventana2 extends javax.swing.JFrame {
             botonesTablero[i][j]
                     .setText(k == 0 ? "" : k + "");
             botonesTablero[i][j].setIcon(null);
-            if (botonesTablero[i][j].getText().equals(Integer.toString(1))) {
+
+            if (botonesTablero[i][j].getText().equals(Integer.toString(1)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 ImageIcon uno = new ImageIcon(getClass().getResource("/Imagenes/uno.png"));
                 Icon cb = new ImageIcon(uno.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
-            } else if (botonesTablero[i][j].getText().equals(Integer.toString(2))) {
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(2)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 ImageIcon dos = new ImageIcon(getClass().getResource("/Imagenes/dos.png"));
                 Icon cb = new ImageIcon(dos.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
-            } else if (botonesTablero[i][j].getText().equals(Integer.toString(3))) {
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(3)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 ImageIcon tres = new ImageIcon(getClass().getResource("/Imagenes/tres.png"));
                 Icon cb = new ImageIcon(tres.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
-            } else if (botonesTablero[i][j].getText().equals(Integer.toString(4))) {
+            } else if (botonesTablero[i][j].getText().equals(Integer.toString(4)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 ImageIcon cuatro = new ImageIcon(getClass().getResource("/Imagenes/cuatro.png"));
                 Icon cb = new ImageIcon(cuatro.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
+
+            
+
             } else {
                 botonesTablero[i][j].setText("");
                 ImageIcon cdb = new ImageIcon(getClass().getResource("/Imagenes/CasillaDesbloqueada.png"));
@@ -214,8 +220,6 @@ public class Ventana2 extends javax.swing.JFrame {
                 botonesTablero[i][j].setIcon(cb);
                 botonesTablero[i][j].setBorder(line);
             }
-
-            System.out.println(botonesTablero[i][j].getText());
 
             /*
             
@@ -297,11 +301,6 @@ public class Ventana2 extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(rootPane, fila + "," + columna);
         tableroBuscaminas.seleccionarCasilla(fila, columna);
 
-        /*
-        ImageIcon c2 = new ImageIcon(getClass().getResource("/Imagenes/CasillaDesbloqueada.png"));
-        Icon cb2 = new ImageIcon(c2.getImage().getScaledInstance(btn.getWidth(), btn.getHeight(), 0));
-        btn.setIcon(cb2);
-         */
     }
 
     /**
