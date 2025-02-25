@@ -115,6 +115,8 @@ public class Ventana2 extends javax.swing.JFrame {
             if (filas < 3 || filas > 10 || columnas < 3 || columnas > 10 || minas < 1 || minas > filas * columnas) {
                 throw new IllegalArgumentException("Valores fuera de rango");
             }
+            panelDerecha.setVisible(true);
+            panelInformativo.setVisible(false);
             descargarControles();
             cargarCasillas();
             crearTableroBuscaminas();
@@ -371,6 +373,8 @@ public class Ventana2 extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         panelTablero = new javax.swing.JPanel();
         panelDerecha = new javax.swing.JPanel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -396,14 +400,25 @@ public class Ventana2 extends javax.swing.JFrame {
 
         panelInformativo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI Black", 0, 24)); // NOI18N
         jLabel4.setText("Bienvenido");
-        panelInformativo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, -1, -1));
+        panelInformativo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, -1, -1));
 
-        jLabel5.setText("Para empezar a jugar primero rellene el numero de filas, columnas, minas");
-        panelInformativo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, -1, 30));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel5.setText("Las minas deben ser como máximo el número de casillas de la cuadrícula");
+        panelInformativo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, -1, 30));
 
-        jLabel6.setText("y luego presione Crear");
-        panelInformativo.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, -1, -1));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel6.setText("Luego presione \"Crear\"");
+        panelInformativo.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel8.setText("Para empezar a jugar primero rellene el numero de filas y columnas");
+        panelInformativo.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, 30));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel7.setText("con un número entre 3 y 10");
+        panelInformativo.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, -1, 30));
 
         getContentPane().add(panelInformativo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 110, 630, 490));
 
@@ -454,22 +469,27 @@ public class Ventana2 extends javax.swing.JFrame {
             }
         });
         panelSuperior.add(on, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, 50, 40));
-        panelSuperior.add(f, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 110, -1));
 
+        f.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        panelSuperior.add(f, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 10, 110, -1));
+
+        c.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         c.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cActionPerformed(evt);
             }
         });
-        panelSuperior.add(c, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 40, 110, -1));
+        panelSuperior.add(c, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 40, 110, -1));
 
+        m.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         m.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mActionPerformed(evt);
             }
         });
-        panelSuperior.add(m, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 110, -1));
+        panelSuperior.add(m, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 70, 110, -1));
 
+        crear.setFont(new java.awt.Font("Segoe UI Black", 0, 24)); // NOI18N
         crear.setText("Crear");
         crear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -478,12 +498,15 @@ public class Ventana2 extends javax.swing.JFrame {
         });
         panelSuperior.add(crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 110, 90));
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel2.setText("Filas:");
         panelSuperior.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel3.setText("Columnas:");
         panelSuperior.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 40, -1, -1));
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Minas:");
         panelSuperior.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, -1, -1));
         panelSuperior.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
@@ -541,10 +564,8 @@ public class Ventana2 extends javax.swing.JFrame {
 
     private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
 
-        
         juegoNuevo();
-        panelDerecha.setVisible(true);
-        panelInformativo.setVisible(false);
+
 
     }//GEN-LAST:event_crearActionPerformed
 
@@ -555,7 +576,7 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_palaActionPerformed
 
     private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
-        JOptionPane.showMessageDialog(null, "Con este boton podra colocar banderas al tablero");
+        JOptionPane.showMessageDialog(null, "Con este boton podra colocar y quitar banderas al tablero");
         cbandera = true;
         cpala = true;
 
@@ -623,6 +644,8 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
