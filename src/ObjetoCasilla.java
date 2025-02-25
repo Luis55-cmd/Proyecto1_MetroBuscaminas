@@ -17,6 +17,7 @@ public class ObjetoCasilla {
     int numMinasAlrededor;
     private boolean abierta;
     ListaAdyacencia lista;
+    private boolean bandera;
 
     //CONSTRUCTOR
     public ObjetoCasilla(int posFila, int posColumna) {
@@ -31,10 +32,26 @@ public class ObjetoCasilla {
     }
 
     //GETTERS AND SETTERS
+
+    public boolean isBandera() {
+        return bandera;
+    }
+
+    public void setBandera(boolean bandera) {
+        this.bandera = bandera;
+    }
+    
+    
+    
+    
+    
+    
+    
     public int getID() {
         return ID;
     }
 
+    
     public boolean isAbierta() {
         return abierta;
     }

@@ -83,7 +83,7 @@ public class Ventana1 extends javax.swing.JFrame {
                 iniciarActionPerformed(evt);
             }
         });
-        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 210, 110, 50));
+        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 130, 110, 50));
 
         on.setText("Music ON");
         on.addActionListener(new java.awt.event.ActionListener() {

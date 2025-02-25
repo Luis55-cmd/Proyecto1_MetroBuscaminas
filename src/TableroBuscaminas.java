@@ -1,3 +1,6 @@
+
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -16,14 +19,19 @@ public class TableroBuscaminas {
     int numMinas;
     //ListaAdyacencia lista[];
     int numCasillasAbiertas;
+    int numeroBanderas;
     boolean juegoTerminado;
+    int contador = 0;
     EventoPartidaPerdida eventoPartidaPerdida;
     EventoPartidaPerdida2 eventoPartidaPerdida2;
     EventoCasillaAbierta eventoCasillaAbierta;
+    EventoBanderaAbierta eventoBanderaAbierta;
+    EventoBanderaCerrada eventoBanderaCerrada;
     EventoPartidaGanada eventoPartidaGanada;
 
     //CONSTRUCTOR
     public TableroBuscaminas(int numFilas, int numColumnas, int numMinas) {
+        this.numeroBanderas = numMinas;
 
         this.numFilas = numFilas;
         this.numColumnas = numColumnas;
@@ -147,6 +155,14 @@ public class TableroBuscaminas {
         this.eventoPartidaPerdida2 = eventoPartidaPerdida2;
     }
 
+    public void setEventoBanderaAbierta(EventoBanderaAbierta eventoBanderaAbierta) {
+        this.eventoBanderaAbierta = eventoBanderaAbierta;
+    }
+
+    public void setEventoBanderaCerrada(EventoBanderaCerrada eventoBanderaCerrada) {
+        this.eventoBanderaCerrada = eventoBanderaCerrada;
+    }
+
     //LISTA DE CASILLAS CON MINAS
     public ListaAdyacencia obtenerCasillasConMinas() {
         ListaAdyacencia casillasConMinas = new ListaAdyacencia();
@@ -200,6 +216,25 @@ public class TableroBuscaminas {
         if (PartidaGanada()) {
             eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
         }
+    }
+
+    public void seleccionarBandera(int posFila, int posColumna) {
+
+        if (!casillas[posFila][posColumna].isBandera() && contador < numMinas) {
+
+            numeroBanderas--;
+            contador++;
+            casillas[posFila][posColumna].setBandera(true);
+            eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
+        } else if(casillas[posFila][posColumna].isBandera() ){
+            numeroBanderas++;
+            contador--;
+            casillas[posFila][posColumna].setBandera(false);
+            eventoBanderaCerrada.ejecutar(casillas[posFila][posColumna]);
+        }else{
+            JOptionPane.showMessageDialog(null, "Error no puede colocar mas banderas");
+        }
+
     }
 
     void marcarCasillaAbierta(int posFila, int posColumna) {

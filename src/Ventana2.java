@@ -7,9 +7,12 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Panel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,8 +26,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import javax.swing.border.Border;
 
@@ -40,6 +45,10 @@ public class Ventana2 extends javax.swing.JFrame {
     private JButton[][] botonesTablero;
 
     TableroBuscaminas tableroBuscaminas;
+
+    boolean cbandera;
+    boolean cpala;
+
     /**
      * Referencia a la ventana principal del juego (Ventana1).
      */
@@ -59,12 +68,20 @@ public class Ventana2 extends javax.swing.JFrame {
         ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
         Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
         on.setIcon(fondo2);
-        on.setOpaque(false);
-        on.setBorder(null);
         on.setBackground(new Color(0, 0, 0, 0));
+
+        ImageIcon palaa = new ImageIcon(getClass().getResource("/Imagenes/pala.png"));
+        Icon p = new ImageIcon(palaa.getImage().getScaledInstance(pala.getWidth(), pala.getHeight(), 0));
+        pala.setIcon(p);
+
+        ImageIcon banderaa = new ImageIcon(getClass().getResource("/Imagenes/bandera.png"));
+        Icon b = new ImageIcon(banderaa.getImage().getScaledInstance(bandera.getWidth(), bandera.getHeight(), 0));
+        bandera.setIcon(b);
+
         f.setText("3");
         c.setText("3");
         m.setText("3");
+        panelDerecha.setVisible(false);
 
     }
 
@@ -93,6 +110,7 @@ public class Ventana2 extends javax.swing.JFrame {
             int filas = Integer.parseInt(f.getText());
             int columnas = Integer.parseInt(c.getText());
             int minas = Integer.parseInt(m.getText());
+            banderas.setText("Banderas: " + m.getText());
 
             if (filas < 3 || filas > 10 || columnas < 3 || columnas > 10 || minas < 1 || minas > filas * columnas) {
                 throw new IllegalArgumentException("Valores fuera de rango");
@@ -176,7 +194,36 @@ public class Ventana2 extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "PARTIDA GANADA!!");
 
         });
+        tableroBuscaminas.setEventoBanderaAbierta((ObjetoCasilla t) -> {
 
+            int i = t.getPosFila();
+            int j = t.getPosColumna();
+
+            if (tableroBuscaminas.numeroBanderas < 0) {
+                JOptionPane.showMessageDialog(null, "Error no hay mas banderas");
+            } else {
+                ImageIcon bc = new ImageIcon(getClass().getResource("/Imagenes/banderaCasilla.png"));
+                Icon bca = new ImageIcon(bc.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(bca);
+                banderas.setText("Banderas: " + tableroBuscaminas.numeroBanderas);
+            }
+
+        });
+
+        tableroBuscaminas.setEventoBanderaCerrada((ObjetoCasilla t) -> {
+            int i = t.getPosFila();
+            int j = t.getPosColumna();
+            if (tableroBuscaminas.numeroBanderas > tableroBuscaminas.numMinas) {
+                JOptionPane.showMessageDialog(null, "Error hay mas banderas");
+            } else {
+                ImageIcon cb = new ImageIcon(getClass().getResource("/Imagenes/CasillaBloqueada.png"));
+                Icon cbl = new ImageIcon(cb.getImage().getScaledInstance(botonesTablero[i][j].getWidth(), botonesTablero[i][j].getHeight(), 0));
+                botonesTablero[i][j].setIcon(cbl);
+
+                banderas.setText("Banderas: " + tableroBuscaminas.numeroBanderas);
+            }
+
+        });
         tableroBuscaminas.setEventoCasillaAbierta((ObjetoCasilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
@@ -224,9 +271,6 @@ public class Ventana2 extends javax.swing.JFrame {
             
              */
         });
-        f.setText("");
-        c.setText("");
-        m.setText("");
 
     }
 
@@ -262,9 +306,9 @@ public class Ventana2 extends javax.swing.JFrame {
                 } else {
                     botonesTablero[i][j].setBounds(botonesTablero[i - 1][j].getX(), botonesTablero[i - 1][j].getY() + botonesTablero[i - 1][j].getWidth(), anchoCasilla, altoCasilla);
                 }
-                botonesTablero[i][j].addActionListener(new ActionListener() {
+                botonesTablero[i][j].addMouseListener(new MouseAdapter() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void mousePressed(MouseEvent e) {
                         btnClick(e);
                     }
                 });
@@ -291,14 +335,23 @@ public class Ventana2 extends javax.swing.JFrame {
      *
      * @param e El evento de acción.
      */
-    private void btnClick(ActionEvent e) {
+    private void btnClick(MouseEvent e) {
 
         JButton btn = (JButton) e.getSource();
         String[] coordenada = btn.getName().split(",");
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
         JOptionPane.showMessageDialog(rootPane, fila + "," + columna);
-        tableroBuscaminas.seleccionarCasilla(fila, columna);
+
+        if (cbandera == true) {
+
+            tableroBuscaminas.seleccionarBandera(fila, columna);
+
+        } else if (cbandera == false && cpala == true) {
+            tableroBuscaminas.seleccionarCasilla(fila, columna);
+        } else {
+            JOptionPane.showMessageDialog(null, "Porfavor seleccione alguno de los botones de la derecha");
+        }
 
     }
 
@@ -314,12 +367,18 @@ public class Ventana2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        panelInformativo = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         panelTablero = new javax.swing.JPanel();
         panelDerecha = new javax.swing.JPanel();
         jSeparator3 = new javax.swing.JSeparator();
+        bandera = new javax.swing.JButton();
+        pala = new javax.swing.JButton();
+        banderas = new javax.swing.JLabel();
         panelSuperior = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
-        jButton6 = new javax.swing.JButton();
         on = new javax.swing.JButton();
         f = new javax.swing.JTextField();
         c = new javax.swing.JTextField();
@@ -329,9 +388,24 @@ public class Ventana2 extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        dfs = new javax.swing.JRadioButton();
+        bfs = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        panelInformativo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel4.setText("Bienvenido");
+        panelInformativo.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, -1, -1));
+
+        jLabel5.setText("Para empezar a jugar primero rellene el numero de filas, columnas, minas");
+        panelInformativo.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, -1, 30));
+
+        jLabel6.setText("y luego presione Crear");
+        panelInformativo.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, -1, -1));
+
+        getContentPane().add(panelInformativo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 110, 630, 490));
 
         javax.swing.GroupLayout panelTableroLayout = new javax.swing.GroupLayout(panelTablero);
         panelTablero.setLayout(panelTableroLayout);
@@ -351,13 +425,27 @@ public class Ventana2 extends javax.swing.JFrame {
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
         panelDerecha.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -150, 50, 640));
 
+        bandera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                banderaActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(bandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 70, 70));
+
+        pala.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                palaActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(pala, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 70, 70));
+
+        banderas.setText("Banderas: ");
+        panelDerecha.add(banderas, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 100, 20));
+
         getContentPane().add(panelDerecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 190, 490));
 
         panelSuperior.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         panelSuperior.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
-
-        jButton6.setText("jButton6");
-        panelSuperior.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 60, -1, 43));
 
         on.setText("Music ON");
         on.addActionListener(new java.awt.event.ActionListener() {
@@ -388,7 +476,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 crearActionPerformed(evt);
             }
         });
-        panelSuperior.add(crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 92, 80));
+        panelSuperior.add(crear, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 110, 90));
 
         jLabel2.setText("Filas:");
         panelSuperior.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
@@ -399,6 +487,12 @@ public class Ventana2 extends javax.swing.JFrame {
         jLabel1.setText("Minas:");
         panelSuperior.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, -1, -1));
         panelSuperior.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
+
+        dfs.setText("Depth-First Search");
+        panelSuperior.add(dfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
+
+        bfs.setText("Breadth-First Search");
+        panelSuperior.add(bfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, -1, -1));
 
         getContentPane().add(panelSuperior, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 110));
 
@@ -446,8 +540,26 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_mActionPerformed
 
     private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
+
+        
         juegoNuevo();
+        panelDerecha.setVisible(true);
+        panelInformativo.setVisible(false);
+
     }//GEN-LAST:event_crearActionPerformed
+
+    private void palaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_palaActionPerformed
+        JOptionPane.showMessageDialog(null, "Con este boton podra barrer las casillas del tablero");
+        cpala = true;
+        cbandera = false;
+    }//GEN-LAST:event_palaActionPerformed
+
+    private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
+        JOptionPane.showMessageDialog(null, "Con este boton podra colocar banderas al tablero");
+        cbandera = true;
+        cpala = true;
+
+    }//GEN-LAST:event_banderaActionPerformed
 
     /**
      * Maneja el evento de click en el botón "Crear". Llama al método
@@ -498,19 +610,27 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bandera;
+    private javax.swing.JLabel banderas;
+    private javax.swing.JRadioButton bfs;
     private javax.swing.JTextField c;
     private javax.swing.JButton crear;
+    private javax.swing.JRadioButton dfs;
     private javax.swing.JTextField f;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField m;
     private javax.swing.JButton on;
+    private javax.swing.JButton pala;
     private javax.swing.JPanel panelDerecha;
+    private javax.swing.JPanel panelInformativo;
     private javax.swing.JPanel panelSuperior;
     private javax.swing.JPanel panelTablero;
     // End of variables declaration//GEN-END:variables
