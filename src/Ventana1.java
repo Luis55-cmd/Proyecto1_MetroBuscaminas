@@ -1,14 +1,11 @@
 
-
-
 import java.awt.Color;
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
 import java.net.URL;
+import javax.swing.*;
 
 
 /*
@@ -32,9 +29,9 @@ public class Ventana1 extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
-        ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
-        Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
-        on.setIcon(fondo2);
+        colocarImagen("/Imagenes/ON.png", on);
+        colocarImagen("/Imagenes/Iniciar.png", iniciar);
+        iniciar.setBackground(new Color(0, 0, 0, 0));
         on.setOpaque(false);
         on.setBorder(null);
         on.setBackground(new Color(0, 0, 0, 0));
@@ -54,6 +51,21 @@ public class Ventana1 extends javax.swing.JFrame {
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
+
+    }
+
+    //Coloca una imagen en un boton
+    public void colocarImagen(String link, JButton boton) {
+        ImageIcon palaa = new ImageIcon(getClass().getResource(link));
+        Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
+        boton.setIcon(x);
+
+    }
+
+    public void colocarImagen(String link, JToggleButton boton) {
+        ImageIcon palaa = new ImageIcon(getClass().getResource(link));
+        Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
+        boton.setIcon(x);
 
     }
 
@@ -77,13 +89,12 @@ public class Ventana1 extends javax.swing.JFrame {
         JPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         iniciar.setFont(new java.awt.Font("Segoe UI Black", 0, 18)); // NOI18N
-        iniciar.setText("INICIAR");
         iniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 iniciarActionPerformed(evt);
             }
         });
-        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 130, 110, 50));
+        JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, 130, 60));
 
         on.setText("Music ON");
         on.addActionListener(new java.awt.event.ActionListener() {
@@ -110,9 +121,7 @@ public class Ventana1 extends javax.swing.JFrame {
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
         if (on.getText() == "Music ON") {
 
-            ImageIcon salir3 = new ImageIcon(getClass().getResource("/Imagenes/OFF.png"));
-            Icon fondo3 = new ImageIcon(salir3.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
-            on.setIcon(fondo3);
+            colocarImagen("/Imagenes/OFF.png", on);
 
             on.setText("Music OFF");
             if (clip != null && clip.isRunning()) {
@@ -120,9 +129,7 @@ public class Ventana1 extends javax.swing.JFrame {
             }
 
         } else if (on.getText() == "Music OFF") {
-            ImageIcon salir2 = new ImageIcon(getClass().getResource("/Imagenes/ON.png"));
-            Icon fondo2 = new ImageIcon(salir2.getImage().getScaledInstance(on.getWidth(), on.getHeight(), 0));
-            on.setIcon(fondo2);
+            colocarImagen("/Imagenes/ON.png", on);
 
             on.setText("Music ON");
             // Play Audio  File           

@@ -5,7 +5,6 @@ import javax.swing.JOptionPane;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author Luis
@@ -23,7 +22,7 @@ public class TableroBuscaminas {
     boolean juegoTerminado;
     int contador = 0;
     EventoPartidaPerdida eventoPartidaPerdida;
-    EventoPartidaPerdida2 eventoPartidaPerdida2;
+
     EventoCasillaAbierta eventoCasillaAbierta;
     EventoBanderaAbierta eventoBanderaAbierta;
     EventoBanderaCerrada eventoBanderaCerrada;
@@ -151,10 +150,6 @@ public class TableroBuscaminas {
         this.eventoPartidaGanada = eventoPartidaGanada;
     }
 
-    public void setEventoPartidaPerdida2(EventoPartidaPerdida2 eventoPartidaPerdida2) {
-        this.eventoPartidaPerdida2 = eventoPartidaPerdida2;
-    }
-
     public void setEventoBanderaAbierta(EventoBanderaAbierta eventoBanderaAbierta) {
         this.eventoBanderaAbierta = eventoBanderaAbierta;
     }
@@ -191,31 +186,38 @@ public class TableroBuscaminas {
 
     //SELECCIONAR UNA CASILLA EN EL JFRAME
     public void seleccionarCasilla(int posFila, int posColumna) {
-        eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
-        if (this.casillas[posFila][posColumna].isMina()) {
 
-            if (eventoPartidaPerdida != null) {
-                eventoPartidaPerdida.ejecutar(obtenerCasillasConMinas());
-                eventoPartidaPerdida2.ejecutar(obtenerCasillas());
-            }
-        } else if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
-            marcarCasillaAbierta(posFila, posColumna);
-            ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
-            NodoAdyacencia actual = casillasAlrededor.cabeza;
-            while (actual != null) {
-                if (!actual.valor.isAbierta()) {
-                    seleccionarCasilla(actual.valor.getPosFila(), actual.valor.getPosColumna());
-
-                }
-                actual = actual.siguiente;
-            }
+        if (casillas[posFila][posColumna].isBandera()) {
+            JOptionPane.showMessageDialog(null, "Error la casilla esta marcada con una bandera", "Error", JOptionPane.ERROR_MESSAGE);
 
         } else {
-            marcarCasillaAbierta(posFila, posColumna);
+            eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
+            if (this.casillas[posFila][posColumna].isMina()) {
+
+                if (eventoPartidaPerdida != null) {
+                    eventoPartidaPerdida.ejecutar(obtenerCasillasConMinas());
+
+                }
+            } else if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
+                marcarCasillaAbierta(posFila, posColumna);
+                ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
+                NodoAdyacencia actual = casillasAlrededor.cabeza;
+                while (actual != null) {
+                    if (!actual.valor.isAbierta()) {
+                        seleccionarCasilla(actual.valor.getPosFila(), actual.valor.getPosColumna());
+
+                    }
+                    actual = actual.siguiente;
+                }
+
+            } else {
+                marcarCasillaAbierta(posFila, posColumna);
+            }
+            if (PartidaGanada()) {
+                eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
+            }
         }
-        if (PartidaGanada()) {
-            eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-        }
+
     }
 
     public void seleccionarBandera(int posFila, int posColumna) {
@@ -226,13 +228,13 @@ public class TableroBuscaminas {
             contador++;
             casillas[posFila][posColumna].setBandera(true);
             eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
-        } else if(casillas[posFila][posColumna].isBandera() ){
+        } else if (casillas[posFila][posColumna].isBandera()) {
             numeroBanderas++;
             contador--;
             casillas[posFila][posColumna].setBandera(false);
             eventoBanderaCerrada.ejecutar(casillas[posFila][posColumna]);
-        }else{
-            JOptionPane.showMessageDialog(null, "Error no puede colocar mas banderas");
+        } else {
+            JOptionPane.showMessageDialog(null, "Error no puede colocar mas banderas", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }
