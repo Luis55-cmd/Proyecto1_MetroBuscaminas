@@ -29,7 +29,7 @@ public class Ventana1 extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
-        colocarImagen("/Imagenes/ON.png", on);
+        colocarImagen2("/Imagenes/ON.png", on);
         colocarImagen("/Imagenes/Iniciar.png", iniciar);
         iniciar.setBackground(new Color(0, 0, 0, 0));
         on.setOpaque(false);
@@ -55,14 +55,14 @@ public class Ventana1 extends javax.swing.JFrame {
     }
 
     //Coloca una imagen en un boton
-    public void colocarImagen(String link, JButton boton) {
+    private void colocarImagen(String link, JButton boton) {
         ImageIcon palaa = new ImageIcon(getClass().getResource(link));
         Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
         boton.setIcon(x);
 
     }
 
-    public void colocarImagen(String link, JToggleButton boton) {
+    private void colocarImagen2(String link, JToggleButton boton) {
         ImageIcon palaa = new ImageIcon(getClass().getResource(link));
         Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
         boton.setIcon(x);
@@ -121,7 +121,7 @@ public class Ventana1 extends javax.swing.JFrame {
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
         if (on.getText() == "Music ON") {
 
-            colocarImagen("/Imagenes/OFF.png", on);
+            colocarImagen2("/Imagenes/OFF.png", on);
 
             on.setText("Music OFF");
             if (clip != null && clip.isRunning()) {
@@ -129,7 +129,7 @@ public class Ventana1 extends javax.swing.JFrame {
             }
 
         } else if (on.getText() == "Music OFF") {
-            colocarImagen("/Imagenes/ON.png", on);
+            colocarImagen2("/Imagenes/ON.png", on);
 
             on.setText("Music ON");
             // Play Audio  File           

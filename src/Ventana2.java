@@ -77,7 +77,7 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     //Coloca una imagen en un boton
-    public void colocarImagen(String link, JButton boton) {
+    private void colocarImagen(String link, JButton boton) {
         ImageIcon palaa = new ImageIcon(getClass().getResource(link));
         Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
         boton.setIcon(x);
