@@ -78,6 +78,18 @@ public class Ventana2 extends javax.swing.JFrame {
         Icon b = new ImageIcon(banderaa.getImage().getScaledInstance(bandera.getWidth(), bandera.getHeight(), 0));
         bandera.setIcon(b);
 
+        ImageIcon arboll = new ImageIcon(getClass().getResource("/Imagenes/arbol.png"));
+        Icon a = new ImageIcon(arboll.getImage().getScaledInstance(arbol.getWidth(), arbol.getHeight(), 0));
+        arbol.setIcon(a);
+
+        ImageIcon guardarr = new ImageIcon(getClass().getResource("/Imagenes/guardar.png"));
+        Icon g = new ImageIcon(guardarr.getImage().getScaledInstance(guardar.getWidth(), guardar.getHeight(), 0));
+        guardar.setIcon(g);
+
+        ImageIcon cargarr = new ImageIcon(getClass().getResource("/Imagenes/cargar.png"));
+        Icon car = new ImageIcon(cargarr.getImage().getScaledInstance(cargar.getWidth(), cargar.getHeight(), 0));
+        cargar.setIcon(car);
+
         f.setText("3");
         c.setText("3");
         m.setText("3");
@@ -381,6 +393,14 @@ public class Ventana2 extends javax.swing.JFrame {
         bandera = new javax.swing.JButton();
         pala = new javax.swing.JButton();
         banderas = new javax.swing.JLabel();
+        cargar = new javax.swing.JButton();
+        arbol = new javax.swing.JButton();
+        guardar = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        informacionbandera = new javax.swing.JButton();
+        informacionarbol = new javax.swing.JButton();
+        informacionpala = new javax.swing.JButton();
         panelSuperior = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
         on = new javax.swing.JButton();
@@ -413,7 +433,7 @@ public class Ventana2 extends javax.swing.JFrame {
         panelInformativo.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel8.setText("Para empezar a jugar primero rellene el numero de filas y columnas");
+        jLabel8.setText("Para empezar a jugar primero rellene el número de filas y columnas");
         panelInformativo.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, 30));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -445,17 +465,68 @@ public class Ventana2 extends javax.swing.JFrame {
                 banderaActionPerformed(evt);
             }
         });
-        panelDerecha.add(bandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 70, 70));
+        panelDerecha.add(bandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 230, 70, 70));
 
         pala.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 palaActionPerformed(evt);
             }
         });
-        panelDerecha.add(pala, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 70, 70));
+        panelDerecha.add(pala, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 70, 70));
 
         banderas.setText("Banderas: ");
-        panelDerecha.add(banderas, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 100, 20));
+        panelDerecha.add(banderas, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, 100, 20));
+
+        cargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cargarActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(cargar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 370, 70, 70));
+
+        arbol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                arbolActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(arbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 70, 70));
+
+        guardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, 70, 70));
+
+        jLabel9.setText("Cargar juego");
+        panelDerecha.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 450, -1, -1));
+
+        jLabel10.setText("Guardar juego");
+        panelDerecha.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, -1, -1));
+
+        informacionbandera.setText("...");
+        informacionbandera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informacionbanderaActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(informacionbandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 230, 20, 20));
+
+        informacionarbol.setText("...");
+        informacionarbol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informacionarbolActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(informacionarbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, 20, 20));
+
+        informacionpala.setText("...");
+        informacionpala.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informacionpalaActionPerformed(evt);
+            }
+        });
+        panelDerecha.add(informacionpala, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 130, 20, 20));
 
         getContentPane().add(panelDerecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 190, 490));
 
@@ -570,17 +641,42 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_crearActionPerformed
 
     private void palaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_palaActionPerformed
-        JOptionPane.showMessageDialog(null, "Con este boton podra barrer las casillas del tablero");
         cpala = true;
         cbandera = false;
     }//GEN-LAST:event_palaActionPerformed
 
     private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
-        JOptionPane.showMessageDialog(null, "Con este boton podra colocar y quitar banderas al tablero");
         cbandera = true;
         cpala = true;
 
     }//GEN-LAST:event_banderaActionPerformed
+
+    private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cargarActionPerformed
+
+    private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_arbolActionPerformed
+
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_guardarActionPerformed
+
+    private void informacionbanderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionbanderaActionPerformed
+        JOptionPane.showMessageDialog(null, "Con este botón podra colocar y quitar banderas al tablero", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+    }//GEN-LAST:event_informacionbanderaActionPerformed
+
+    private void informacionpalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionpalaActionPerformed
+        JOptionPane.showMessageDialog(null, "Con este botón podra barrer las casillas del tablero", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+    }//GEN-LAST:event_informacionpalaActionPerformed
+
+    private void informacionarbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionarbolActionPerformed
+        JOptionPane.showMessageDialog(null, "Con este botón podra ver el árbol de recorrido", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+    }//GEN-LAST:event_informacionarbolActionPerformed
 
     /**
      * Maneja el evento de click en el botón "Crear". Llama al método
@@ -631,14 +727,21 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton arbol;
     private javax.swing.JButton bandera;
     private javax.swing.JLabel banderas;
     private javax.swing.JRadioButton bfs;
     private javax.swing.JTextField c;
+    private javax.swing.JButton cargar;
     private javax.swing.JButton crear;
     private javax.swing.JRadioButton dfs;
     private javax.swing.JTextField f;
+    private javax.swing.JButton guardar;
+    private javax.swing.JButton informacionarbol;
+    private javax.swing.JButton informacionbandera;
+    private javax.swing.JButton informacionpala;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -646,6 +749,7 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
