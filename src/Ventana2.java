@@ -344,7 +344,7 @@ public class Ventana2 extends javax.swing.JFrame {
         } else if (colocarbandera == false && colocarpala == true) {
             tableroBuscaminas.seleccionarCasilla(fila, columna);
         } else if (juegoTerminado == true) {
-            JOptionPane.showMessageDialog(null, "No puede seleccionar mas casillas", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El juego termino, no puede seleccionar más casillas", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Porfavor seleccione la pala si desea barrer una casilla", "Error", JOptionPane.ERROR_MESSAGE);
         }
