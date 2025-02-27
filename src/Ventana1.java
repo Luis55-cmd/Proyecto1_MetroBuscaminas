@@ -19,6 +19,11 @@ import javax.swing.*;
 public class Ventana1 extends javax.swing.JFrame {
 
     public static Clip clip;
+    
+     /**
+     * Referencia a la clase funciones..
+     */
+    Funciones funciones = new Funciones();
 
     /**
      * Creates new form Ventana1
@@ -29,8 +34,8 @@ public class Ventana1 extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
-        colocarImagen2("/Imagenes/ON.png", on);
-        colocarImagen("/Imagenes/Iniciar.png", iniciar);
+        funciones.colocarImagen("/Imagenes/ON.png", on);
+        funciones.colocarImagen("/Imagenes/Iniciar.png", iniciar);
         iniciar.setBackground(new Color(0, 0, 0, 0));
         on.setOpaque(false);
         on.setBorder(null);
@@ -54,21 +59,6 @@ public class Ventana1 extends javax.swing.JFrame {
 
     }
 
-    //Coloca una imagen en un boton
-    private void colocarImagen(String link, JButton boton) {
-        ImageIcon palaa = new ImageIcon(getClass().getResource(link));
-        Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
-        boton.setIcon(x);
-
-    }
-
-    private void colocarImagen2(String link, JToggleButton boton) {
-        ImageIcon palaa = new ImageIcon(getClass().getResource(link));
-        Icon x = new ImageIcon(palaa.getImage().getScaledInstance(boton.getWidth(), boton.getHeight(), 0));
-        boton.setIcon(x);
-
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -89,6 +79,7 @@ public class Ventana1 extends javax.swing.JFrame {
         JPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         iniciar.setFont(new java.awt.Font("Segoe UI Black", 0, 18)); // NOI18N
+        iniciar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         iniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 iniciarActionPerformed(evt);
@@ -97,6 +88,7 @@ public class Ventana1 extends javax.swing.JFrame {
         JPanel.add(iniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 110, 130, 60));
 
         on.setText("Music ON");
+        on.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         on.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onActionPerformed(evt);
@@ -118,18 +110,19 @@ public class Ventana1 extends javax.swing.JFrame {
         ventana2.setVisible(true);
     }//GEN-LAST:event_iniciarActionPerformed
 
+    @SuppressWarnings("CallToPrintStackTrace")
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
-        if (on.getText() == "Music ON") {
+        if ("Music ON".equals(on.getText())) {
 
-            colocarImagen2("/Imagenes/OFF.png", on);
+            funciones.colocarImagen("/Imagenes/OFF.png", on);
 
             on.setText("Music OFF");
             if (clip != null && clip.isRunning()) {
                 clip.stop();
             }
 
-        } else if (on.getText() == "Music OFF") {
-            colocarImagen2("/Imagenes/ON.png", on);
+        } else if ("Music OFF".equals(on.getText())) {
+            funciones.colocarImagen("/Imagenes/ON.png", on);
 
             on.setText("Music ON");
             // Play Audio  File           
@@ -174,10 +167,8 @@ public class Ventana1 extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Ventana1().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Ventana1().setVisible(true);
         });
     }
 
