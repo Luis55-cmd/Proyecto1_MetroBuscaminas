@@ -1,6 +1,5 @@
 package EstructurasDeDatos;
 
-import Clases.*;
 import Interfacez.*;
 
 import javax.swing.JOptionPane;
@@ -13,6 +12,7 @@ import javax.swing.JOptionPane;
  *
  * @author Luis
  */
+//Clase grafo del tablero
 public class Grafo {
 
     //ATRIBUTOS
@@ -20,10 +20,12 @@ public class Grafo {
     public int numFilas;
     public int numColumnas;
     public int numMinas;
-    //ListaAdyacencia lista[];
+
     public int numCasillasAbiertas;
     public int numeroBanderas;
     public int contador = 0;
+
+    //ATRIBUTOS EVENTOS
     EventoPartidaPerdida eventoPartidaPerdida;
 
     EventoCasillaAbierta eventoCasillaAbierta;
@@ -42,7 +44,7 @@ public class Grafo {
         inicializarCasilla();
     }
 
-    //INICIO LAS CASILLAS
+    //CREA LAS CASILLAS RECORRIENDO LA MATRIZ
     public void inicializarCasilla() {
         casillas = new Casilla[this.numFilas][this.numColumnas];
         for (int i = 0; i < casillas.length; i++) { //filas
@@ -51,14 +53,14 @@ public class Grafo {
                 char columnaLetra = (char) ('A' + j);
 
                 casillas[i][j] = new Casilla(i, j);
-                casillas[i][j].setID(Integer.parseInt(i + "" + j));
+                casillas[i][j].setID(columnaLetra + "" + i);
 
             }
         }
         generarMinas();
     }
 
-    //GENERO LAS MINAS EN LAS CASILLAS
+    //GENERA LAS MINAS EN LAS CASILLAS Y LAS ACTUALIZA
     private void generarMinas() {
         int minasGeneradas = 0;
         while (minasGeneradas != numMinas) {
@@ -141,18 +143,22 @@ public class Grafo {
         this.eventoPartidaPerdida = eventoPartidaPerdida;
     }
 
+    //EVENTO DE CASILLA ABIERTA PARA NOTIFICAR AL JFRAME
     public void setEventoCasillaAbierta(EventoCasillaAbierta eventoCasillaAbierta) {
         this.eventoCasillaAbierta = eventoCasillaAbierta;
     }
 
+    //EVENTO DE PARTIDA GANADA PARA NOTIFICAR AL JFRAME
     public void setEventoPartidaGanada(EventoPartidaGanada eventoPartidaGanada) {
         this.eventoPartidaGanada = eventoPartidaGanada;
     }
 
+    //EVENTO DE BANDERA ABIERTA PARA NOTIFICAR AL JFRAME
     public void setEventoBanderaAbierta(EventoBanderaAbierta eventoBanderaAbierta) {
         this.eventoBanderaAbierta = eventoBanderaAbierta;
     }
 
+    //EVENTO DE BANDERA CERRADA PARA NOTIFICAR AL JFRAME
     public void setEventoBanderaCerrada(EventoBanderaCerrada eventoBanderaCerrada) {
         this.eventoBanderaCerrada = eventoBanderaCerrada;
     }
@@ -184,7 +190,7 @@ public class Grafo {
     }
 
     //Aqui debemos hacer el bfs y dfs
-    //SELECCIONAR UNA CASILLA EN EL JFRAME
+    //SELECCIONAR UNA CASILLA EN EL JFRAME Y OCURREN 3 EVENTOS
     public void seleccionarCasilla(int posFila, int posColumna) {
 
         if (casillas[posFila][posColumna].isBandera()) {
@@ -203,7 +209,7 @@ public class Grafo {
                 marcarCasillaAbierta(posFila, posColumna);
                 if (PartidaGanada()) {
                     eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-                    System.out.println("ganaste");
+
                 }
                 ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
                 NodoAdyacencia actual = casillasAlrededor.cabeza;
@@ -219,7 +225,7 @@ public class Grafo {
                 marcarCasillaAbierta(posFila, posColumna);
                 if (PartidaGanada()) {
                     eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-                    System.out.println("ganaste");
+
                 }
             }
 
@@ -227,6 +233,7 @@ public class Grafo {
 
     }
 
+    //SELECCIONAR UNA CASILLA EN EL JFRAME CON LA BANDERA
     public void seleccionarBandera(int posFila, int posColumna) {
         if (casillas[posFila][posColumna].isAbierta()) {
             JOptionPane.showMessageDialog(null, "Error la casilla ya esta abierta", "Error", JOptionPane.ERROR_MESSAGE);
@@ -249,6 +256,7 @@ public class Grafo {
         }
     }
 
+    //MARCAR UNA CASILLA COMO ABIERTA
     void marcarCasillaAbierta(int posFila, int posColumna) {
         if (!casillas[posFila][posColumna].isAbierta()) {
             numCasillasAbiertas++;
@@ -257,6 +265,7 @@ public class Grafo {
 
     }
 
+    //SI SE ABREN TODAS LAS CASILLAS QUE NO SEAN MINAS ES UNA PARTIDA GANADA
     boolean PartidaGanada() {
         return numCasillasAbiertas >= (numFilas * numColumnas) - numMinas;
 
@@ -266,14 +275,14 @@ public class Grafo {
     public void imprimirGrafo() {
         System.out.println("    Grafo:");
 
-        for (int i = 0; i < this.casillas.length; i++) {
-            for (int j = 0; j < this.casillas[i].length; j++) {
+        for (int i = 0; i < this.casillas.length; i++) {        //fila
+            for (int j = 0; j < this.casillas[i].length; j++) {     //columna
 
                 System.out.println("");
                 System.out.println("-Casilla/Vertice: [" + j + "," + i + "]");
-                ListaAdyacencia casillasAdyacentes = obtenerCasillasAlrededor(i, j);
+
                 System.out.print("Adyacentes: ");
-                casillasAdyacentes.MostrarLista();
+                obtenerCasillasAlrededor(i, j).MostrarLista();
             }
         }
     }

@@ -4,11 +4,8 @@ package Jframes;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-import EstructurasDeDatos.NodoAdyacencia;
-import EstructurasDeDatos.ListaAdyacencia;
+import EstructurasDeDatos.*;
 import Clases.*;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
@@ -74,7 +71,6 @@ public class Ventana2 extends javax.swing.JFrame {
         funciones.colocarImagen("/Imagenes/guardar.png", guardar);
         funciones.colocarImagen("/Imagenes/cargar.png", cargar);
         funciones.colocarImagen("/Imagenes/crear.png", crear);
-
         funciones.colocarImagen("/Imagenes/bienvenida.png", bienvenida);
         bienvenida.setBackground(new Color(0, 0, 0, 0));
 
@@ -85,6 +81,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
+    //CON ESTO BORRAMOS LOS BOTONES QUE QUEDAN CUANDO SE GANA O PIERDE UN JUEGO
     void descargarControles() {
         if (botonesTablero != null) {
             for (int i = 0; i < botonesTablero.length; i++) {
@@ -129,6 +126,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
+    //CON ESTO CREAMOS UN NUEVO TABLERO
     private void crearTableroBuscaminas() {
 
         tableroBuscaminas = new Tablero(Integer.parseInt(f.getText()), Integer.parseInt(c.getText()), Integer.parseInt(m.getText()));
@@ -292,7 +290,7 @@ public class Ventana2 extends javax.swing.JFrame {
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
                 botonesTablero[i][j] = new JButton();
-                
+
                 botonesTablero[i][j].setName(i + "," + j);
 
                 if (i == 0 && j == 0) {
@@ -338,8 +336,9 @@ public class Ventana2 extends javax.swing.JFrame {
         String[] coordenada = btn.getName().split(",");
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
-        
-        JOptionPane.showMessageDialog(rootPane, fila + "," + columna);
+        String ID = tableroBuscaminas.getGrafo().casillas[fila][columna].getID();
+
+        JOptionPane.showMessageDialog(rootPane, ID);
 
         if (colocarbandera == true) {
 
@@ -461,7 +460,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 banderaActionPerformed(evt);
             }
         });
-        panelDerecha.add(bandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 230, 70, 70));
+        panelDerecha.add(bandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 70, 70));
 
         pala.setToolTipText("Seleccionar pala");
         pala.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -470,10 +469,10 @@ public class Ventana2 extends javax.swing.JFrame {
                 palaActionPerformed(evt);
             }
         });
-        panelDerecha.add(pala, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 70, 70));
+        panelDerecha.add(pala, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 110, 70, 70));
 
         banderas.setText("Banderas: ");
-        panelDerecha.add(banderas, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, 100, 20));
+        panelDerecha.add(banderas, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 100, 20));
 
         cargar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cargar.addActionListener(new java.awt.event.ActionListener() {
@@ -490,7 +489,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 arbolActionPerformed(evt);
             }
         });
-        panelDerecha.add(arbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 70, 70));
+        panelDerecha.add(arbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 70, 70));
 
         guardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         guardar.addActionListener(new java.awt.event.ActionListener() {
@@ -512,7 +511,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 informacionbanderaActionPerformed(evt);
             }
         });
-        panelDerecha.add(informacionbandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 230, 20, 20));
+        panelDerecha.add(informacionbandera, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 210, 20, 20));
 
         informacionarbol.setText("...");
         informacionarbol.addActionListener(new java.awt.event.ActionListener() {
@@ -520,7 +519,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 informacionarbolActionPerformed(evt);
             }
         });
-        panelDerecha.add(informacionarbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, 20, 20));
+        panelDerecha.add(informacionarbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 20, 20, 20));
 
         informacionpala.setText("...");
         informacionpala.addActionListener(new java.awt.event.ActionListener() {
@@ -528,13 +527,13 @@ public class Ventana2 extends javax.swing.JFrame {
                 informacionpalaActionPerformed(evt);
             }
         });
-        panelDerecha.add(informacionpala, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 130, 20, 20));
+        panelDerecha.add(informacionpala, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 20, 20));
 
         SeleccionadoText.setText("Seleccionado:");
-        panelDerecha.add(SeleccionadoText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, -1, -1));
+        panelDerecha.add(SeleccionadoText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 320, -1, -1));
 
         SeleccionadoButton.setEnabled(false);
-        panelDerecha.add(SeleccionadoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 330, 25, 25));
+        panelDerecha.add(SeleccionadoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 310, 25, 25));
 
         getContentPane().add(panelDerecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 190, 490));
 
@@ -604,6 +603,8 @@ public class Ventana2 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
+        //ESTE BOTON ES PARA LA MUSICA
+
         if ("Music ON".equals(on.getText())) {
 
             funciones.colocarImagen("/Imagenes/OFF.png", on);
@@ -639,6 +640,8 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_mActionPerformed
 
     private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
+        //ESTE BOTON ES PARA CREAR UN NUEVO TABLERO
+
         juegoTerminado = false;
         pala.setEnabled(true);
         bandera.setEnabled(true);
@@ -648,12 +651,16 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_crearActionPerformed
 
     private void palaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_palaActionPerformed
+        //ESTE BOTON ES PARA SELECCIONAR LA PALA
+
         colocarpala = true;
         colocarbandera = false;
         funciones.colocarImagen("/Imagenes/pala.png", SeleccionadoButton);
     }//GEN-LAST:event_palaActionPerformed
 
     private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
+        //ESTE BOTON ES PARA SELECCIONAR LA BANDERA
+
         colocarbandera = true;
         colocarpala = true;
         funciones.colocarImagen("/Imagenes/bandera.png", SeleccionadoButton);

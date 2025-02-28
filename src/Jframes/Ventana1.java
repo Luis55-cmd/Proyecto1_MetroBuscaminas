@@ -1,6 +1,5 @@
 package Jframes;
 
-
 import Clases.*;
 import java.awt.Color;
 import javax.sound.sampled.*;
@@ -8,8 +7,6 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import java.net.URL;
-
-
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,9 +18,10 @@ import java.net.URL;
  */
 public class Ventana1 extends javax.swing.JFrame {
 
+    //ESTO ES PARA LA MUSICA
     public static Clip clip;
-    
-     /**
+
+    /**
      * Referencia a la clase funciones..
      */
     Funciones funciones = new Funciones();
@@ -44,12 +42,13 @@ public class Ventana1 extends javax.swing.JFrame {
         on.setBorder(null);
         on.setBackground(new Color(0, 0, 0, 0));
 
+        //ESTO ES PARA EL FONDO
         ImageIcon fon = new ImageIcon(getClass().getResource("/Imagenes/fondo.png"));
         Icon fondo5 = new ImageIcon(fon.getImage().getScaledInstance(pantalla.getWidth(), pantalla.getHeight(), 0));
         pantalla.setIcon(fondo5);
 
         this.repaint();
-        // Play Audio  File        
+        //ESTO ES PARA LA MUSICA       
         try {
             URL audioPath = getClass().getClassLoader().getResource("Musica/song.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioPath);
@@ -107,6 +106,8 @@ public class Ventana1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarActionPerformed
+        //BOTON PARA INICIAR EL JUEGO
+
         this.setVisible(false);
         Ventana2 ventana2 = new Ventana2();
         ventana2.setVisible(true);
@@ -114,6 +115,8 @@ public class Ventana1 extends javax.swing.JFrame {
 
     @SuppressWarnings("CallToPrintStackTrace")
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
+        //BOTON PARA LA MUSICA
+
         if ("Music ON".equals(on.getText())) {
 
             funciones.colocarImagen("/Imagenes/OFF.png", on);
@@ -161,7 +164,7 @@ public class Ventana1 extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Ventana1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the form */

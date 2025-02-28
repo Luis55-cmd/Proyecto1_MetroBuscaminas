@@ -1,13 +1,9 @@
 package EstructurasDeDatos;
 
-import Clases.Casilla;
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
-
 /**
  *
  * @author Luis
@@ -27,7 +23,7 @@ public class ListaAdyacencia {
         this.cola = null;
     }
 
-    //CONSTRUCTOR
+    //CONSTRUCTOR VACIO
     public ListaAdyacencia() {
         this.valor = valor;
         this.cabeza = null;
