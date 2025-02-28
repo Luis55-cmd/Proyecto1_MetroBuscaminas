@@ -47,9 +47,9 @@ public class Grafo {
         casillas = new Casilla[this.numFilas][this.numColumnas];
         for (int i = 0; i < casillas.length; i++) { //filas
             for (int j = 0; j < casillas[i].length; j++) { //columnas
-                
+
                 char columnaLetra = (char) ('A' + j);
-                
+
                 casillas[i][j] = new Casilla(i, j);
                 casillas[i][j].setID(Integer.parseInt(i + "" + j));
 
@@ -183,6 +183,7 @@ public class Grafo {
         return casillaslistado;
     }
 
+    //Aqui debemos hacer el bfs y dfs
     //SELECCIONAR UNA CASILLA EN EL JFRAME
     public void seleccionarCasilla(int posFila, int posColumna) {
 
@@ -191,6 +192,7 @@ public class Grafo {
 
         } else {
             eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
+
             if (this.casillas[posFila][posColumna].isMina()) {
 
                 if (eventoPartidaPerdida != null) {
@@ -199,6 +201,10 @@ public class Grafo {
                 }
             } else if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
                 marcarCasillaAbierta(posFila, posColumna);
+                if (PartidaGanada()) {
+                    eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
+                    System.out.println("ganaste");
+                }
                 ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
                 NodoAdyacencia actual = casillasAlrededor.cabeza;
                 while (actual != null) {
@@ -211,14 +217,15 @@ public class Grafo {
 
             } else {
                 marcarCasillaAbierta(posFila, posColumna);
+                if (PartidaGanada()) {
+                    eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
+                    System.out.println("ganaste");
+                }
             }
-            if (PartidaGanada()) {
-                eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-            }
+
         }
 
     }
-    
 
     public void seleccionarBandera(int posFila, int posColumna) {
         if (casillas[posFila][posColumna].isAbierta()) {
@@ -261,7 +268,7 @@ public class Grafo {
 
         for (int i = 0; i < this.casillas.length; i++) {
             for (int j = 0; j < this.casillas[i].length; j++) {
-                
+
                 System.out.println("");
                 System.out.println("-Casilla/Vertice: [" + j + "," + i + "]");
                 ListaAdyacencia casillasAdyacentes = obtenerCasillasAlrededor(i, j);
