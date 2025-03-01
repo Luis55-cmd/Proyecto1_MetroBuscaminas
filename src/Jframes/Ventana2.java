@@ -10,7 +10,11 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -18,9 +22,11 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -38,6 +44,8 @@ public class Ventana2 extends javax.swing.JFrame {
     boolean colocarbandera;
     boolean colocarpala;
     boolean juegoTerminado;
+    
+    int contador = 0;
 
     /**
      * Referencia a la ventana principal del juego (Ventana1).
@@ -115,8 +123,8 @@ public class Ventana2 extends javax.swing.JFrame {
             panelDerecha.setVisible(true);
             panelInformativo.setVisible(false);
             descargarControles();
-            cargarCasillas();
-            crearTableroBuscaminas();
+            cargarCasillas(filas, columnas);
+            crearTableroBuscaminas(filas, columnas, minas);
             repaint();
 
         } catch (IllegalArgumentException ex) {
@@ -126,13 +134,9 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
-    //CON ESTO CREAMOS UN NUEVO TABLERO
-    private void crearTableroBuscaminas() {
-
-        tableroBuscaminas = new Tablero(Integer.parseInt(f.getText()), Integer.parseInt(c.getText()), Integer.parseInt(m.getText()));
-        tableroBuscaminas.imprimirTablero(); //En la consola
-
-        //Sin Labmda expresion
+    
+    private void configurarEventosGrafo(){
+                //Sin Labmda expresion
         /*
         tableroBuscaminas.setEventoPartidaPerdida(new EventoPartidaPerdida() {
             @Override
@@ -149,17 +153,12 @@ public class Ventana2 extends javax.swing.JFrame {
         //Con Labmda expresion
         tableroBuscaminas.getGrafo().setEventoPartidaPerdida((ListaAdyacencia t) -> {
             NodoAdyacencia recorrer = t.cabeza;
-
             while (recorrer != null) {
                 int i = recorrer.valor.getPosFila();
                 int j = recorrer.valor.getPosColumna();
-
                 botonesTablero[i][j].setIcon(null);
-
                 funciones.colocarImagen("/Imagenes/Bomba.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBackground(new Color(139, 69, 19));
-
                 recorrer = recorrer.siguiente;
             }
             colocarbandera = false;
@@ -169,24 +168,17 @@ public class Ventana2 extends javax.swing.JFrame {
             bandera.setEnabled(false);
             funciones.colocarImagen(null, SeleccionadoButton);
             JOptionPane.showMessageDialog(null, "PISASTE UNA MINA", "PERDISTE!!!", JOptionPane.INFORMATION_MESSAGE);
-
         });
 
         tableroBuscaminas.getGrafo().setEventoPartidaGanada((ListaAdyacencia t) -> {
-
             NodoAdyacencia recorrer = t.cabeza;
             while (recorrer != null) {
                 int i = recorrer.valor.getPosFila();
                 int j = recorrer.valor.getPosColumna();
-
                 botonesTablero[i][j].setIcon(null);
-
                 funciones.colocarImagen("/Imagenes/Bomba.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBackground(new Color(139, 69, 19));
-
                 recorrer = recorrer.siguiente;
-
             }
             colocarbandera = false;
             colocarpala = false;
@@ -195,21 +187,17 @@ public class Ventana2 extends javax.swing.JFrame {
             bandera.setEnabled(false);
             funciones.colocarImagen(null, SeleccionadoButton);
             JOptionPane.showMessageDialog(null, "PARTIDA GANADA", "GANASTE!!!", JOptionPane.INFORMATION_MESSAGE);
-
         });
+        
         tableroBuscaminas.getGrafo().setEventoBanderaAbierta((Casilla t) -> {
-
             int i = t.getPosFila();
             int j = t.getPosColumna();
-
             if (tableroBuscaminas.getGrafo().numeroBanderas < 0) {
                 JOptionPane.showMessageDialog(null, "No hay mas banderas para colocar", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 funciones.colocarImagen("/Imagenes/banderaCasilla.png", botonesTablero[i][j]);
-
                 banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
             }
-
         });
 
         tableroBuscaminas.getGrafo().setEventoBanderaCerrada((Casilla t) -> {
@@ -219,56 +207,48 @@ public class Ventana2 extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "No hay banderas en el tablero para quitar", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 funciones.colocarImagen("/Imagenes/CasillaBloqueada.png", botonesTablero[i][j]);
-
                 banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
             }
-
         });
+        
         tableroBuscaminas.getGrafo().setEventoCasillaAbierta((Casilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
             int k = t.getNumMinasAlrededor();
             Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
-
             botonesTablero[i][j]
                     .setText(k == 0 ? "" : k + "");
             botonesTablero[i][j].setIcon(null);
-
             if (botonesTablero[i][j].getText().equals(Integer.toString(1)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
-
                 funciones.colocarImagen("/Imagenes/uno.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
             } else if (botonesTablero[i][j].getText().equals(Integer.toString(2)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 funciones.colocarImagen("/Imagenes/dos.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
             } else if (botonesTablero[i][j].getText().equals(Integer.toString(3)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
-
                 funciones.colocarImagen("/Imagenes/tres.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
             } else if (botonesTablero[i][j].getText().equals(Integer.toString(4)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 funciones.colocarImagen("/Imagenes/cuatro.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
-
             } else {
                 botonesTablero[i][j].setText("");
                 funciones.colocarImagen("/Imagenes/CasillaDesbloqueada.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
             }
-
-            /*
-            
-             */
         });
-
+    }
+    
+    
+    //CON ESTO CREAMOS UN NUEVO TABLERO
+    private void crearTableroBuscaminas(int filas, int columnas, int minas) {
+        tableroBuscaminas = new Tablero(filas, columnas, minas);
+        tableroBuscaminas.imprimirTablero(); //En la consola
+        configurarEventosGrafo();
     }
 
     /**
@@ -276,8 +256,10 @@ public class Ventana2 extends javax.swing.JFrame {
      * las dimensiones especificadas, establece su posición y tamaño, agrega un
      * ActionListener a cada botón y los añade al panel.
      *
+     * @param filas
+     * @param columnas
      */
-    public void cargarCasillas() {
+    public void cargarCasillas(int filas, int columnas) {
 
         int posXreferencia = 25;
         int posYreferencia = 25;
@@ -286,7 +268,7 @@ public class Ventana2 extends javax.swing.JFrame {
         Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
         panelTablero.removeAll();
 
-        botonesTablero = new JButton[Integer.parseInt(f.getText())][Integer.parseInt(c.getText())];
+        botonesTablero = new JButton[filas][columnas];
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
                 botonesTablero[i][j] = new JButton();
@@ -668,15 +650,127 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_banderaActionPerformed
 
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        // TODO add your handling code here:
+    JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showOpenDialog(this);
+        contador = 0; // Reiniciar contador
+
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+                // Leer configuración inicial
+                String[] datosTablero = br.readLine().split(",");
+                int filas = Integer.parseInt(datosTablero[0]);
+                int columnas = Integer.parseInt(datosTablero[1]);
+                int minas = Integer.parseInt(datosTablero[2]);
+
+                // Inicializar tablero
+                Casilla[][] tableroCargado = new Casilla[filas][columnas];
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] datos = linea.split(",");
+                    int columna = Integer.parseInt(datos[0]);
+                    int fila = Integer.parseInt(datos[1]);
+                    boolean esMina = Boolean.parseBoolean(datos[2]);
+                    boolean esBandera = Boolean.parseBoolean(datos[3]);
+                    boolean esAbierta = Boolean.parseBoolean(datos[4]);
+                    int numMinas = Integer.parseInt(datos[5]);
+
+                    Casilla casilla = new Casilla(fila, columna);
+                    casilla.setMina(esMina);
+                    casilla.setBandera(esBandera);
+                    casilla.setAbierta(esAbierta);
+                    casilla.setNumMinasAlrededor(numMinas);
+                    tableroCargado[fila][columna] = casilla;
+                    
+                    if (esBandera) contador++;
+                }
+
+                // Actualizar interfaz
+                descargarControles();
+                cargarCasillas(filas, columnas);
+                cargarTableroBuscaminas(filas, columnas, minas, tableroCargado);
+                banderas.setText("Banderas: " + (minas - contador));
+                repaint();
+
+            } catch (IOException | NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_cargarActionPerformed
 
+    private void cargarTableroBuscaminas(int filas, int columnas, int minas, Casilla[][] tableroCargado) {
+        
+        tableroBuscaminas = new Tablero(filas, columnas, minas);
+        configurarEventosGrafo();
+
+        // Cargar estado de las casillas
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                Casilla casilla = tableroCargado[i][j];
+                Casilla casillaGrafo = tableroBuscaminas.getGrafo().casillas[i][j];
+                
+                casillaGrafo.setMina(casilla.isMina());
+                casillaGrafo.setBandera(casilla.isBandera());
+                casillaGrafo.setAbierta(casilla.isAbierta());
+                casillaGrafo.setNumMinasAlrededor(casilla.getNumMinasAlrededor());
+
+                if (casilla.isAbierta()) {
+                    tableroBuscaminas.getGrafo().numCasillasAbiertas++;
+                    tableroBuscaminas.getGrafo().eventoCasillaAbierta.ejecutar(casillaGrafo);
+                } 
+                if (casilla.isBandera()) {
+                    tableroBuscaminas.getGrafo().eventoBanderaAbierta.ejecutar(casillaGrafo);
+                    contador++;
+                }
+            }
+        }
+        banderas.setText("Banderas: " + (minas - contador));
+        // Verificar si la partida ya está ganada
+        if (tableroBuscaminas.getGrafo().PartidaGanada()) {
+            tableroBuscaminas.getGrafo().eventoPartidaGanada.ejecutar(
+                tableroBuscaminas.getGrafo().obtenerCasillasConMinas()
+            );
+        }
+    }
+    
     private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_arbolActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showSaveDialog(this);
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            try (PrintWriter pw = new PrintWriter(archivo)) {
+                // Guardar configuración
+                pw.println(tableroBuscaminas.getGrafo().numFilas + "," 
+                        + tableroBuscaminas.getGrafo().numColumnas + "," 
+                        + tableroBuscaminas.getGrafo().numMinas);
+
+                // Guardar casillas
+                for (int i = 0; i < tableroBuscaminas.getGrafo().casillas.length; i++) {
+                    for (int j = 0; j < tableroBuscaminas.getGrafo().casillas[i].length; j++) {
+                        Casilla casilla = tableroBuscaminas.getGrafo().casillas[i][j];
+                        pw.println(j + "," + i + "," 
+                                + casilla.isMina() + "," 
+                                + casilla.isBandera() + "," 
+                                + casilla.isAbierta() + "," 
+                                + casilla.getNumMinasAlrededor());
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "Partida guardada exitosamente");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_guardarActionPerformed
 
     private void informacionbanderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionbanderaActionPerformed

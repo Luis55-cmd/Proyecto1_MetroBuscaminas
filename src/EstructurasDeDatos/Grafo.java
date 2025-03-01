@@ -1,6 +1,10 @@
 package EstructurasDeDatos;
 
-import Interfacez.*;
+import Interfaces.EventoBanderaAbierta;
+import Interfaces.EventoPartidaPerdida;
+import Interfaces.EventoPartidaGanada;
+import Interfaces.EventoBanderaCerrada;
+import Interfaces.EventoCasillaAbierta;
 
 import javax.swing.JOptionPane;
 
@@ -28,14 +32,15 @@ public class Grafo {
     //ATRIBUTOS EVENTOS
     EventoPartidaPerdida eventoPartidaPerdida;
 
-    EventoCasillaAbierta eventoCasillaAbierta;
-    EventoBanderaAbierta eventoBanderaAbierta;
-    EventoBanderaCerrada eventoBanderaCerrada;
-    EventoPartidaGanada eventoPartidaGanada;
+    public EventoCasillaAbierta eventoCasillaAbierta;
+    public EventoBanderaAbierta eventoBanderaAbierta;
+    public EventoBanderaCerrada eventoBanderaCerrada;
+    public EventoPartidaGanada eventoPartidaGanada;
 
     //CONSTRUCTOR
     public Grafo(int numFilas, int numColumnas, int numMinas) {
         this.numeroBanderas = numMinas;
+        this.numCasillasAbiertas = 0;
 
         this.numFilas = numFilas;
         this.numColumnas = numColumnas;
@@ -266,7 +271,7 @@ public class Grafo {
     }
 
     //SI SE ABREN TODAS LAS CASILLAS QUE NO SEAN MINAS ES UNA PARTIDA GANADA
-    boolean PartidaGanada() {
+    public boolean PartidaGanada() {
         return numCasillasAbiertas >= (numFilas * numColumnas) - numMinas;
 
     }

@@ -1,4 +1,4 @@
-package Interfacez;
+package Interfaces;
 
 import EstructurasDeDatos.*;
 
@@ -10,8 +10,8 @@ import EstructurasDeDatos.*;
  *
  * @author Luis
  */
-//INTERFAZ PARA NOTIFICAR AL JFRAME QUE SE ABRIO UNA CASILLA
-public interface EventoCasillaAbierta {
+//INTERFAZ PARA NOTIFICAR AL JFRAME QUE SE ABRIO UNA BANDERA
+public interface EventoBanderaCerrada {
 
     void ejecutar(Casilla casilla);
 }
