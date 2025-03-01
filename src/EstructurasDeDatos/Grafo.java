@@ -245,14 +245,11 @@ public class Grafo {
 
         } else {
             if (!casillas[posFila][posColumna].isBandera() && contador < numMinas) {
-
-                numeroBanderas--;
-                contador++;
+                //numeroBanderas--;
                 casillas[posFila][posColumna].setBandera(true);
                 eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
             } else if (casillas[posFila][posColumna].isBandera()) {
-                numeroBanderas++;
-                contador--;
+                //numeroBanderas++;
                 casillas[posFila][posColumna].setBandera(false);
                 eventoBanderaCerrada.ejecutar(casillas[posFila][posColumna]);
             } else {

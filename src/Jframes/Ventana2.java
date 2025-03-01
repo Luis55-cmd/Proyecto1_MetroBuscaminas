@@ -192,10 +192,11 @@ public class Ventana2 extends javax.swing.JFrame {
         tableroBuscaminas.getGrafo().setEventoBanderaAbierta((Casilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
-            if (tableroBuscaminas.getGrafo().numeroBanderas < 0) {
-                JOptionPane.showMessageDialog(null, "No hay mas banderas para colocar", "Error", JOptionPane.ERROR_MESSAGE);
+            if (tableroBuscaminas.getGrafo().numeroBanderas <= 0) {
+                JOptionPane.showMessageDialog(null, "No hay más banderas para colocar", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 funciones.colocarImagen("/Imagenes/banderaCasilla.png", botonesTablero[i][j]);
+                tableroBuscaminas.getGrafo().numeroBanderas--;
                 banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
             }
         });
@@ -203,10 +204,11 @@ public class Ventana2 extends javax.swing.JFrame {
         tableroBuscaminas.getGrafo().setEventoBanderaCerrada((Casilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
-            if (tableroBuscaminas.getGrafo().numeroBanderas > tableroBuscaminas.getGrafo().numMinas) {
+            if (tableroBuscaminas.getGrafo().numeroBanderas >= tableroBuscaminas.getGrafo().numMinas) {
                 JOptionPane.showMessageDialog(null, "No hay banderas en el tablero para quitar", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 funciones.colocarImagen("/Imagenes/CasillaBloqueada.png", botonesTablero[i][j]);
+                tableroBuscaminas.getGrafo().numeroBanderas++;
                 banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
             }
         });
@@ -272,14 +274,12 @@ public class Ventana2 extends javax.swing.JFrame {
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
                 botonesTablero[i][j] = new JButton();
-
                 botonesTablero[i][j].setName(i + "," + j);
-
+                
                 if (i == 0 && j == 0) {
                     botonesTablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
                 } else if (i == 0 && j != 0) {
                     botonesTablero[i][j].setBounds(botonesTablero[i][j - 1].getX() + botonesTablero[i][j - 1].getWidth(), posYreferencia, anchoCasilla, altoCasilla);
-
                 } else {
                     botonesTablero[i][j].setBounds(botonesTablero[i - 1][j].getX(), botonesTablero[i - 1][j].getY() + botonesTablero[i - 1][j].getWidth(), anchoCasilla, altoCasilla);
                 }
@@ -291,17 +291,12 @@ public class Ventana2 extends javax.swing.JFrame {
                 });
 
                 panelTablero.add(botonesTablero[i][j]);
-
                 funciones.colocarImagen("/Imagenes/CasillaBloqueada.png", botonesTablero[i][j]);
-
                 botonesTablero[i][j].setBorder(line);
-
             }
         }
-
         panelTablero.revalidate();
         panelTablero.repaint();
-
     }
 
     /**
@@ -644,13 +639,14 @@ public class Ventana2 extends javax.swing.JFrame {
         //ESTE BOTON ES PARA SELECCIONAR LA BANDERA
 
         colocarbandera = true;
-        colocarpala = true;
+        colocarpala = false;
         funciones.colocarImagen("/Imagenes/bandera.png", SeleccionadoButton);
 
     }//GEN-LAST:event_banderaActionPerformed
 
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-    JFileChooser fileChooser = new JFileChooser();
+        //ESTE BOTON ES PARA CARGAR UNA PARTIDA DESDE UN ARCHIVO CSV
+        JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
         fileChooser.setFileFilter(filtro);
 
@@ -658,6 +654,13 @@ public class Ventana2 extends javax.swing.JFrame {
         contador = 0; // Reiniciar contador
 
         if (seleccion == JFileChooser.APPROVE_OPTION) {
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            
+            // restablece los botones del menu
+            juegoTerminado = false;
+            pala.setEnabled(true);
+            bandera.setEnabled(true);
+            
             File archivo = fileChooser.getSelectedFile();
 
             try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -699,11 +702,11 @@ public class Ventana2 extends javax.swing.JFrame {
             } catch (IOException | NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Error al cargar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_cargarActionPerformed
 
     private void cargarTableroBuscaminas(int filas, int columnas, int minas, Casilla[][] tableroCargado) {
-        
         tableroBuscaminas = new Tablero(filas, columnas, minas);
         configurarEventosGrafo();
 
@@ -728,7 +731,8 @@ public class Ventana2 extends javax.swing.JFrame {
                 }
             }
         }
-        banderas.setText("Banderas: " + (minas - contador));
+        tableroBuscaminas.getGrafo().numeroBanderas = minas - contador;
+        banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
         // Verificar si la partida ya está ganada
         if (tableroBuscaminas.getGrafo().PartidaGanada()) {
             tableroBuscaminas.getGrafo().eventoPartidaGanada.ejecutar(
@@ -742,6 +746,7 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_arbolActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        //ESTE BOTON ES PARA GUARDAR UNA PARTIDA EN UN ARCHIVO CSV
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
         fileChooser.setFileFilter(filtro);
