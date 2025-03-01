@@ -274,7 +274,25 @@ public class Ventana2 extends javax.swing.JFrame {
         for (int i = 0; i < botonesTablero.length; i++) {
             for (int j = 0; j < botonesTablero[i].length; j++) {
                 botonesTablero[i][j] = new JButton();
-                botonesTablero[i][j].setName(i + "," + j);
+                JButton boton = botonesTablero[i][j] = new JButton();
+                boton.setName(i + "," + j);
+                
+                boton.addMouseMotionListener(new MouseAdapter(){
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        String[] coordenadas = boton.getName().split(",");
+                        int fila = Integer.parseInt(coordenadas[0]) + 1;
+                        int columna = Integer.parseInt(coordenadas[1]) + 1;
+                        char columnaLetra = (char) ('A' + columna - 1);
+                        casillaText.setText("Casilla: " + columnaLetra + fila);
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        casillaText.setText("");
+                    }
+                });
                 
                 if (i == 0 && j == 0) {
                     botonesTablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
@@ -365,6 +383,7 @@ public class Ventana2 extends javax.swing.JFrame {
         informacionpala = new javax.swing.JButton();
         SeleccionadoText = new javax.swing.JLabel();
         SeleccionadoButton = new javax.swing.JButton();
+        casillaText = new javax.swing.JLabel();
         panelSuperior = new javax.swing.JPanel();
         jSeparator2 = new javax.swing.JSeparator();
         on = new javax.swing.JButton();
@@ -511,6 +530,9 @@ public class Ventana2 extends javax.swing.JFrame {
 
         SeleccionadoButton.setEnabled(false);
         panelDerecha.add(SeleccionadoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 310, 25, 25));
+
+        casillaText.setText("Casilla");
+        panelDerecha.add(casillaText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 470, 90, 20));
 
         getContentPane().add(panelDerecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 110, 190, 490));
 
@@ -849,6 +871,7 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JButton bienvenida;
     private javax.swing.JTextField c;
     private javax.swing.JButton cargar;
+    private javax.swing.JLabel casillaText;
     private javax.swing.JButton crear;
     private javax.swing.JRadioButton dfs;
     private javax.swing.JTextField f;
