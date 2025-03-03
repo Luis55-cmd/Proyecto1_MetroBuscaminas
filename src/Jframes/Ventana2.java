@@ -24,9 +24,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
+
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -44,7 +48,8 @@ public class Ventana2 extends javax.swing.JFrame {
     boolean colocarbandera;
     boolean colocarpala;
     boolean juegoTerminado;
-    
+    Node startNode;
+
     int contador = 0;
 
     /**
@@ -84,7 +89,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
         f.setText("3");
         c.setText("3");
-        m.setText("3");
+        m.setText("1");
         panelDerecha.setVisible(false);
 
     }
@@ -134,9 +139,8 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
-    
-    private void configurarEventosGrafo(){
-                //Sin Labmda expresion
+    private void configurarEventosGrafo() {
+        //Sin Labmda expresion
         /*
         tableroBuscaminas.setEventoPartidaPerdida(new EventoPartidaPerdida() {
             @Override
@@ -188,7 +192,7 @@ public class Ventana2 extends javax.swing.JFrame {
             funciones.colocarImagen(null, SeleccionadoButton);
             JOptionPane.showMessageDialog(null, "PARTIDA GANADA", "GANASTE!!!", JOptionPane.INFORMATION_MESSAGE);
         });
-        
+
         tableroBuscaminas.getGrafo().setEventoBanderaAbierta((Casilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
@@ -212,15 +216,16 @@ public class Ventana2 extends javax.swing.JFrame {
                 banderas.setText("Banderas: " + tableroBuscaminas.getGrafo().numeroBanderas);
             }
         });
-        
+
         tableroBuscaminas.getGrafo().setEventoCasillaAbierta((Casilla t) -> {
             int i = t.getPosFila();
             int j = t.getPosColumna();
             int k = t.getNumMinasAlrededor();
             Border line = BorderFactory.createLineBorder(Color.GRAY, 2);
-            botonesTablero[i][j]
-                    .setText(k == 0 ? "" : k + "");
+            botonesTablero[i][j].setEnabled(false);
+            botonesTablero[i][j].setText(k == 0 ? "" : k + "");
             botonesTablero[i][j].setIcon(null);
+
             if (botonesTablero[i][j].getText().equals(Integer.toString(1)) && !t.isMina()) {
                 botonesTablero[i][j].setText("");
                 funciones.colocarImagen("/Imagenes/uno.png", botonesTablero[i][j]);
@@ -238,17 +243,22 @@ public class Ventana2 extends javax.swing.JFrame {
                 funciones.colocarImagen("/Imagenes/cuatro.png", botonesTablero[i][j]);
                 botonesTablero[i][j].setBorder(line);
             } else {
+
                 botonesTablero[i][j].setText("");
                 funciones.colocarImagen("/Imagenes/CasillaDesbloqueada.png", botonesTablero[i][j]);
                 botonesTablero[i][j].setBorder(line);
             }
+
         });
+
     }
-    
-    
+
     //CON ESTO CREAMOS UN NUEVO TABLERO
     private void crearTableroBuscaminas(int filas, int columnas, int minas) {
         tableroBuscaminas = new Tablero(filas, columnas, minas);
+        tableroBuscaminas.imprimirPistas();//En la consola
+
+        System.out.println("");
         tableroBuscaminas.imprimirTablero(); //En la consola
         configurarEventosGrafo();
     }
@@ -276,8 +286,8 @@ public class Ventana2 extends javax.swing.JFrame {
                 botonesTablero[i][j] = new JButton();
                 JButton boton = botonesTablero[i][j] = new JButton();
                 boton.setName(i + "," + j);
-                
-                boton.addMouseMotionListener(new MouseAdapter(){
+
+                boton.addMouseMotionListener(new MouseAdapter() {
                     @Override
                     public void mouseMoved(MouseEvent e) {
                         String[] coordenadas = boton.getName().split(",");
@@ -293,7 +303,7 @@ public class Ventana2 extends javax.swing.JFrame {
                         casillaText.setText("");
                     }
                 });
-                
+
                 if (i == 0 && j == 0) {
                     botonesTablero[i][j].setBounds(posXreferencia, posYreferencia, anchoCasilla, altoCasilla);
                 } else if (i == 0 && j != 0) {
@@ -305,6 +315,7 @@ public class Ventana2 extends javax.swing.JFrame {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         btnClick(e);
+
                     }
                 });
 
@@ -324,23 +335,32 @@ public class Ventana2 extends javax.swing.JFrame {
      *
      * @param e El evento de acción.
      */
-    private void btnClick(MouseEvent e) {
+    public void btnClick(MouseEvent e) {
 
         JButton btn = (JButton) e.getSource();
         //System.out.println(btn.getName());
+
         String[] coordenada = btn.getName().split(",");
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
         String ID = tableroBuscaminas.getGrafo().casillas[fila][columna].getID();
 
-        JOptionPane.showMessageDialog(rootPane, ID);
-
+        //JOptionPane.showMessageDialog(rootPane, ID);
         if (colocarbandera == true) {
 
             tableroBuscaminas.getGrafo().seleccionarBandera(fila, columna);
 
         } else if (colocarbandera == false && colocarpala == true) {
-            tableroBuscaminas.getGrafo().seleccionarCasilla(fila, columna);
+            if (botondfs.isSelected()) {
+                tableroBuscaminas.getGrafo().setRecorridoDFS(true);
+                tableroBuscaminas.getGrafo().setRecorridoBFS(false);
+                tableroBuscaminas.getGrafo().seleccionarCasilla(fila, columna);
+            } else if (botonbfs.isSelected()) {
+                tableroBuscaminas.getGrafo().setRecorridoBFS(true);
+                tableroBuscaminas.getGrafo().setRecorridoDFS(false);
+                tableroBuscaminas.getGrafo().seleccionarCasilla(fila, columna);
+            }
+
         } else if (juegoTerminado == true) {
             JOptionPane.showMessageDialog(null, "El juego termino, no puede seleccionar más casillas", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -361,6 +381,7 @@ public class Ventana2 extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        GrupoBotones = new javax.swing.ButtonGroup();
         panelInformativo = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -395,8 +416,8 @@ public class Ventana2 extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        dfs = new javax.swing.JRadioButton();
-        bfs = new javax.swing.JRadioButton();
+        botondfs = new javax.swing.JRadioButton();
+        botonbfs = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -590,11 +611,24 @@ public class Ventana2 extends javax.swing.JFrame {
         panelSuperior.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, -1, -1));
         panelSuperior.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 107, 660, -1));
 
-        dfs.setText("Depth-First Search");
-        panelSuperior.add(dfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
+        GrupoBotones.add(botondfs);
+        botondfs.setSelected(true);
+        botondfs.setText("Depth-First Search");
+        botondfs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botondfsActionPerformed(evt);
+            }
+        });
+        panelSuperior.add(botondfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 80, -1, -1));
 
-        bfs.setText("Breadth-First Search");
-        panelSuperior.add(bfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, -1, -1));
+        GrupoBotones.add(botonbfs);
+        botonbfs.setText("Breadth-First Search");
+        botonbfs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonbfsActionPerformed(evt);
+            }
+        });
+        panelSuperior.add(botonbfs, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, -1, -1));
 
         getContentPane().add(panelSuperior, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 110));
 
@@ -677,12 +711,12 @@ public class Ventana2 extends javax.swing.JFrame {
 
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            
+
             // restablece los botones del menu
             juegoTerminado = false;
             pala.setEnabled(true);
             bandera.setEnabled(true);
-            
+
             File archivo = fileChooser.getSelectedFile();
 
             try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -710,8 +744,10 @@ public class Ventana2 extends javax.swing.JFrame {
                     casilla.setAbierta(esAbierta);
                     casilla.setNumMinasAlrededor(numMinas);
                     tableroCargado[fila][columna] = casilla;
-                    
-                    if (esBandera) contador++;
+
+                    if (esBandera) {
+                        contador++;
+                    }
                 }
 
                 // Actualizar interfaz
@@ -737,7 +773,7 @@ public class Ventana2 extends javax.swing.JFrame {
             for (int j = 0; j < columnas; j++) {
                 Casilla casilla = tableroCargado[i][j];
                 Casilla casillaGrafo = tableroBuscaminas.getGrafo().casillas[i][j];
-                
+
                 casillaGrafo.setMina(casilla.isMina());
                 casillaGrafo.setBandera(casilla.isBandera());
                 casillaGrafo.setAbierta(casilla.isAbierta());
@@ -746,7 +782,7 @@ public class Ventana2 extends javax.swing.JFrame {
                 if (casilla.isAbierta()) {
                     tableroBuscaminas.getGrafo().numCasillasAbiertas++;
                     tableroBuscaminas.getGrafo().eventoCasillaAbierta.ejecutar(casillaGrafo);
-                } 
+                }
                 if (casilla.isBandera()) {
                     tableroBuscaminas.getGrafo().eventoBanderaAbierta.ejecutar(casillaGrafo);
                     contador++;
@@ -758,13 +794,23 @@ public class Ventana2 extends javax.swing.JFrame {
         // Verificar si la partida ya está ganada
         if (tableroBuscaminas.getGrafo().PartidaGanada()) {
             tableroBuscaminas.getGrafo().eventoPartidaGanada.ejecutar(
-                tableroBuscaminas.getGrafo().obtenerCasillasConMinas()
+                    tableroBuscaminas.getGrafo().obtenerCasillasConMinas()
             );
         }
     }
-    
+
+
     private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
-        // TODO add your handling code here:
+        tableroBuscaminas.getGrafo().empezarArbol();
+        if (tableroBuscaminas.getGrafo().RecorridoDFS) {
+            //tableroBuscaminas.getGrafo().recorrerDFS(startNode);
+
+        } else if (tableroBuscaminas.getGrafo().RecorridoBFS) {
+            //recorrerBFS(startNode);
+
+        }
+
+
     }//GEN-LAST:event_arbolActionPerformed
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
@@ -778,18 +824,18 @@ public class Ventana2 extends javax.swing.JFrame {
             File archivo = fileChooser.getSelectedFile();
             try (PrintWriter pw = new PrintWriter(archivo)) {
                 // Guardar configuración
-                pw.println(tableroBuscaminas.getGrafo().numFilas + "," 
-                        + tableroBuscaminas.getGrafo().numColumnas + "," 
+                pw.println(tableroBuscaminas.getGrafo().numFilas + ","
+                        + tableroBuscaminas.getGrafo().numColumnas + ","
                         + tableroBuscaminas.getGrafo().numMinas);
 
                 // Guardar casillas
                 for (int i = 0; i < tableroBuscaminas.getGrafo().casillas.length; i++) {
                     for (int j = 0; j < tableroBuscaminas.getGrafo().casillas[i].length; j++) {
                         Casilla casilla = tableroBuscaminas.getGrafo().casillas[i][j];
-                        pw.println(j + "," + i + "," 
-                                + casilla.isMina() + "," 
-                                + casilla.isBandera() + "," 
-                                + casilla.isAbierta() + "," 
+                        pw.println(j + "," + i + ","
+                                + casilla.isMina() + ","
+                                + casilla.isBandera() + ","
+                                + casilla.isAbierta() + ","
                                 + casilla.getNumMinasAlrededor());
                     }
                 }
@@ -818,6 +864,14 @@ public class Ventana2 extends javax.swing.JFrame {
     private void bienvenidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bienvenidaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_bienvenidaActionPerformed
+
+    private void botondfsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botondfsActionPerformed
+        //iniciarExploracion("Depth-First Search");
+    }//GEN-LAST:event_botondfsActionPerformed
+
+    private void botonbfsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonbfsActionPerformed
+        //iniciarExploracion("Breadth-First Search");
+    }//GEN-LAST:event_botonbfsActionPerformed
 
     /**
      * Maneja el evento de click en el botón "Crear". Llama al método
@@ -862,18 +916,19 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup GrupoBotones;
     private javax.swing.JButton SeleccionadoButton;
     private javax.swing.JLabel SeleccionadoText;
     private javax.swing.JButton arbol;
     private javax.swing.JButton bandera;
     private javax.swing.JLabel banderas;
-    private javax.swing.JRadioButton bfs;
     private javax.swing.JButton bienvenida;
+    private javax.swing.JRadioButton botonbfs;
+    private javax.swing.JRadioButton botondfs;
     private javax.swing.JTextField c;
     private javax.swing.JButton cargar;
     private javax.swing.JLabel casillaText;
     private javax.swing.JButton crear;
-    private javax.swing.JRadioButton dfs;
     private javax.swing.JTextField f;
     private javax.swing.JButton guardar;
     private javax.swing.JButton informacionarbol;

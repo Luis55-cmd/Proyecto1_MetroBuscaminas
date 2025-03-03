@@ -5,7 +5,8 @@ import Interfaces.EventoPartidaPerdida;
 import Interfaces.EventoPartidaGanada;
 import Interfaces.EventoBanderaCerrada;
 import Interfaces.EventoCasillaAbierta;
-
+import org.graphstream.graph.*;
+import org.graphstream.graph.implementations.*;
 import javax.swing.JOptionPane;
 
 /*
@@ -28,6 +29,9 @@ public class Grafo {
     public int numCasillasAbiertas;
     public int numeroBanderas;
     public int contador = 0;
+    public boolean RecorridoBFS = false;
+    public boolean RecorridoDFS = false;
+    public Graph graph;
 
     //ATRIBUTOS EVENTOS
     EventoPartidaPerdida eventoPartidaPerdida;
@@ -47,6 +51,99 @@ public class Grafo {
         this.numMinas = numMinas;
 
         inicializarCasilla();
+        inicializarGraphStream();
+    }
+
+    public void inicializarGraphStream() {
+
+        graph = new SingleGraph("Buscaminas");
+        graph.setAttribute("ui.stylesheet", styleSheet);
+        for (int i = 0; i < numFilas; i++) {
+            for (int j = 0; j < numColumnas; j++) {
+                String id = casillas[i][j].getID();
+                graph.addNode(id).setAttribute("ui.label", id);
+            }
+        }
+        for (int i = 0; i < numFilas; i++) {
+            for (int j = 0; j < numColumnas; j++) {
+                ListaAdyacencia vecinos = obtenerCasillasAlrededor(i, j);
+                NodoAdyacencia nodo = vecinos.cabeza;
+                while (nodo != null) {
+                    String id1 = casillas[i][j].getID();
+                    String id2 = nodo.valor.getID();
+                    if (graph.getEdge(id1 + "-" + id2) == null && graph.getEdge(id2 + "-" + id1) == null) {
+                        graph.addEdge(id1 + "-" + id2, id1, id2);
+                    }
+                    nodo = nodo.siguiente;
+                }
+            }
+        }
+
+    }
+    protected String styleSheet = "node { fill-color: black; } node.marked { fill-color: red; }" + "node { text-size: 20; }";
+
+    public void empezarArbol() {
+        System.setProperty("org.graphstream.ui", "swing");
+        graph.display();
+    }
+
+    private void recorrerBFS(int posFila, int posColumna) {
+        Cola cola = new Cola();
+        cola.encolar(casillas[posFila][posColumna]);
+        while (!cola.IsEmpty()) {
+            Casilla actual = cola.desencolar();
+            eventoCasillaAbierta.ejecutar(actual);
+            System.out.println("Visitando (BFS): (" + actual.getPosFila() + ", " + actual.getPosColumna() + ")");
+
+            //graph.getNode(actual.getPosFila() + ", " + actual.getPosColumna()).setAttribute("ui.style", "fill-color: blue;");
+            ListaAdyacencia vecinos = obtenerCasillasAlrededor(actual.getPosFila(), actual.getPosColumna());
+            NodoAdyacencia nodo = vecinos.cabeza;
+            while (nodo != null) {
+                Casilla vecino = nodo.valor;
+                if (!vecino.isAbierta() && !vecino.isMina()) {
+                    marcarCasillaAbierta(vecino.getPosFila(), vecino.getPosColumna());
+                    eventoCasillaAbierta.ejecutar(vecino);
+                    if (vecino.getNumMinasAlrededor() == 0) {
+                        cola.encolar(vecino);
+                    }
+                }
+                nodo = nodo.siguiente;
+            }
+        }
+
+    }
+
+    private void recorrerDFS(int posFila, int posColumna) {
+        Pila pila = new Pila();
+        pila.apilar(casillas[posFila][posColumna]);
+
+        while (!pila.IsEmpty()) {
+            Casilla actual = pila.desapilar();
+
+            // Ejecutar evento para cada casilla visitada
+            eventoCasillaAbierta.ejecutar(actual);
+
+            // Imprimir en consola la casilla visitada
+            System.out.println("Visitando (DFS): (" + actual.getPosFila() + ", " + actual.getPosColumna() + ")");
+
+            ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(actual.getPosFila(), actual.getPosColumna());
+            NodoAdyacencia nodo = casillasAlrededor.cabeza;
+
+            while (nodo != null) {
+                Casilla vecino = nodo.valor;
+                if (!vecino.isAbierta() && !vecino.isMina()) {
+                    marcarCasillaAbierta(vecino.getPosFila(), vecino.getPosColumna());
+
+                    eventoCasillaAbierta.ejecutar(vecino); // Ejecutar evento para vecino
+
+                    if (vecino.getNumMinasAlrededor() == 0) {
+                        pila.apilar(vecino);
+                    }
+
+                }
+                nodo = nodo.siguiente;
+            }
+        }
     }
 
     //CREA LAS CASILLAS RECORRIENDO LA MATRIZ
@@ -194,8 +291,6 @@ public class Grafo {
         return casillaslistado;
     }
 
-    //Aqui debemos hacer el bfs y dfs
-    //SELECCIONAR UNA CASILLA EN EL JFRAME Y OCURREN 3 EVENTOS
     public void seleccionarCasilla(int posFila, int posColumna) {
 
         if (casillas[posFila][posColumna].isBandera()) {
@@ -204,26 +299,24 @@ public class Grafo {
         } else {
             eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
 
+            //LA CASILLA SEA MINA
             if (this.casillas[posFila][posColumna].isMina()) {
 
                 if (eventoPartidaPerdida != null) {
                     eventoPartidaPerdida.ejecutar(obtenerCasillasConMinas());
 
                 }
+
             } else if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
                 marcarCasillaAbierta(posFila, posColumna);
                 if (PartidaGanada()) {
                     eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
 
                 }
-                ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
-                NodoAdyacencia actual = casillasAlrededor.cabeza;
-                while (actual != null) {
-                    if (!actual.valor.isAbierta()) {
-                        seleccionarCasilla(actual.valor.getPosFila(), actual.valor.getPosColumna());
-
-                    }
-                    actual = actual.siguiente;
+                if (RecorridoDFS) {
+                    recorrerDFS(posFila, posColumna);
+                } else if (RecorridoBFS) {
+                    recorrerBFS(posFila, posColumna);
                 }
 
             } else {
@@ -238,6 +331,39 @@ public class Grafo {
 
     }
 
+    /*
+    public void seleccionarCasilla(int posFila, int posColumna) {
+        if (casillas[posFila][posColumna].isBandera()) {
+            JOptionPane.showMessageDialog(null, "Error: la casilla está marcada con una bandera", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
+
+        if (casillas[posFila][posColumna].isMina()) {
+            if (eventoPartidaPerdida != null) {
+                eventoPartidaPerdida.ejecutar(obtenerCasillasConMinas());
+            }
+            return;
+        }
+
+        marcarCasillaAbierta(posFila, posColumna);
+
+        if (PartidaGanada()) {
+            eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
+            return;
+        }
+
+        if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
+            if (RecorridoDFS) {
+                recorrerDFS(posFila, posColumna);
+            } else if (RecorridoBFS) {
+                recorrerBFS(posFila, posColumna);
+            }
+
+        }
+    }
+     */
     //SELECCIONAR UNA CASILLA EN EL JFRAME CON LA BANDERA
     public void seleccionarBandera(int posFila, int posColumna) {
         if (casillas[posFila][posColumna].isAbierta()) {
@@ -312,6 +438,22 @@ public class Grafo {
             System.out.println("");
         }
 
+    }
+
+    public boolean isRecorridoBFS() {
+        return RecorridoBFS;
+    }
+
+    public void setRecorridoBFS(boolean RecorridoBFS) {
+        this.RecorridoBFS = RecorridoBFS;
+    }
+
+    public boolean isRecorridoDFS() {
+        return RecorridoDFS;
+    }
+
+    public void setRecorridoDFS(boolean RecorridoDFS) {
+        this.RecorridoDFS = RecorridoDFS;
     }
 
 }

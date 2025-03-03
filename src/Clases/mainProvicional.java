@@ -21,6 +21,7 @@ public class mainProvicional {
         tablero.imprimirPistas();
         System.out.println("-----------");
         tablero.imprimirGrafo();
+        
 
     }
 }
