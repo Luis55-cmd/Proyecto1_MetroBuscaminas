@@ -29,6 +29,7 @@ public class Grafo {
     public int numCasillasAbiertas;
     public int numeroBanderas;
     public int contador = 0;
+    public int visitCounter = 0;
     public boolean RecorridoBFS = false;
     public boolean RecorridoDFS = false;
     public Graph graph;
@@ -58,14 +59,18 @@ public class Grafo {
 
         graph = new SingleGraph("Buscaminas");
         graph.setAttribute("ui.stylesheet", styleSheet);
-        for (int i = 0; i < numFilas; i++) {
-            for (int j = 0; j < numColumnas; j++) {
+
+        //Construir los nodos
+        for (int i = 0; i < casillas.length; i++) { //filas
+            for (int j = 0; j < casillas[i].length; j++) { //columnas
                 String id = casillas[i][j].getID();
                 graph.addNode(id).setAttribute("ui.label", id);
             }
         }
-        for (int i = 0; i < numFilas; i++) {
-            for (int j = 0; j < numColumnas; j++) {
+
+        //Construir las aristas
+        for (int i = 0; i < casillas.length; i++) { //filas
+            for (int j = 0; j < casillas[i].length; j++) { //columnas
                 ListaAdyacencia vecinos = obtenerCasillasAlrededor(i, j);
                 NodoAdyacencia nodo = vecinos.cabeza;
                 while (nodo != null) {
@@ -78,13 +83,116 @@ public class Grafo {
                 }
             }
         }
+        colocarMinas();
 
     }
-    protected String styleSheet = "node { fill-color: black; } node.marked { fill-color: red; }" + "node { text-size: 20; }";
+    public String styleSheet = "node { fill-color: black; } node.marked { fill-color: red; }" + "node { text-size: 20; }";
+
+    public void sleep() {
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Edge[] getEachEdge(Node node) {
+        Edge[] edges = new Edge[node.getDegree()];
+        for (int i = 0; i < node.getDegree(); i++) {
+            edges[i] = node.getEdge(i);
+        }
+        return edges;
+    }
 
     public void empezarArbol() {
         System.setProperty("org.graphstream.ui", "swing");
         graph.display();
+    }
+
+    public void resetearArbol() {
+        for (Node node : graph) {
+            node.removeAttribute("visited");
+            node.removeAttribute("ui.class");
+            node.setAttribute("ui.label", node.getId());
+        }
+        colocarMinas();
+        System.out.println("Tablero reseteado.");
+    }
+
+    private void colocarMinas() {
+        for (int i = 0; i < casillas.length; i++) { //filas
+            for (int j = 0; j < casillas[i].length; j++) { //columnas
+                if (!casillas[i][j].isMina()) {
+                    String mina = i + "," + j;
+                    if (!mina.equals("0,0")) {
+                        Node node = graph.getNode(mina);
+                        if (node != null) {
+                            node.setAttribute("ui.class", "mina");
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private boolean esMina(Node node) {
+        return obtenerCasillasConMinas().contieneMinaArbol(node.getId());
+    }
+
+    public void recorrerDFSArbol(Node source) {
+        System.out.println("Recorriendo en DFS...");
+        Pila pila = new Pila();
+        pila.apilarNodo(source);
+        source.setAttribute("visited", true);
+
+        while (!pila.IsEmpty()) {
+            Node next = pila.desapilarNodo();
+
+            if (esMina(next)) {
+                System.out.println("💥 ¡Mina encontrada en " + next.getId() + "! Juego terminado.");
+                break;
+            }
+
+            next.setAttribute("ui.class", "marked");
+            next.setAttribute("ui.label", next.getId() + " (" + (++visitCounter) + ")");
+            sleep();
+
+            for (Edge edge : getEachEdge(next)) {
+                Node vecino = edge.getOpposite(next);
+                if (!vecino.hasAttribute("visited") && !esMina(vecino)) {
+                    vecino.setAttribute("visited", true);
+                    pila.apilarNodo(vecino);
+                }
+            }
+        }
+    }
+
+    public void recorrerBFSArbol(Node source) {
+        System.out.println("Recorriendo en BFS...");
+        Cola cola = new Cola();
+        cola.encolarNodo(source);
+        source.setAttribute("visited", true);
+
+        while (!cola.IsEmpty()) {
+            Node next = cola.desencolarNodo();
+            if (esMina(next)) {
+                System.out.println("💥 ¡Mina encontrada en " + next.getId() + "! Juego terminado.");
+                break;
+            }
+
+            next.setAttribute("ui.class", "marked");
+            next.setAttribute("ui.label", next.getId() + " (" + (++visitCounter) + ")");
+            sleep();
+
+            for (Edge edge : getEachEdge(next)) {
+                Node vecino = edge.getOpposite(next);
+                if (!vecino.hasAttribute("visited") && !esMina(vecino)) {
+                    vecino.setAttribute("visited", true);
+                    cola.encolarNodo(vecino);
+                }
+            }
+        }
     }
 
     private void recorrerBFS(int posFila, int posColumna) {
@@ -152,10 +260,9 @@ public class Grafo {
         for (int i = 0; i < casillas.length; i++) { //filas
             for (int j = 0; j < casillas[i].length; j++) { //columnas
 
-                char columnaLetra = (char) ('A' + j);
-
+                //char columnaLetra = (char) ('A' + j);
                 casillas[i][j] = new Casilla(i, j);
-                casillas[i][j].setID(columnaLetra + "" + i);
+                casillas[i][j].setID(i + "," + j);
 
             }
         }

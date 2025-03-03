@@ -48,6 +48,7 @@ public class Ventana2 extends javax.swing.JFrame {
     boolean colocarbandera;
     boolean colocarpala;
     boolean juegoTerminado;
+    String casillaSeleccionada;
     Node startNode;
 
     int contador = 0;
@@ -92,6 +93,14 @@ public class Ventana2 extends javax.swing.JFrame {
         m.setText("1");
         panelDerecha.setVisible(false);
 
+    }
+
+    public String getCasillaSeleccionada() {
+        return casillaSeleccionada;
+    }
+
+    public void setCasillaSeleccionada(String casillaSeleccionada) {
+        this.casillaSeleccionada = casillaSeleccionada;
     }
 
     //CON ESTO BORRAMOS LOS BOTONES QUE QUEDAN CUANDO SE GANA O PIERDE UN JUEGO
@@ -341,8 +350,10 @@ public class Ventana2 extends javax.swing.JFrame {
         //System.out.println(btn.getName());
 
         String[] coordenada = btn.getName().split(",");
+        setCasillaSeleccionada(btn.getName());
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
+
         String ID = tableroBuscaminas.getGrafo().casillas[fila][columna].getID();
 
         //JOptionPane.showMessageDialog(rootPane, ID);
@@ -550,6 +561,11 @@ public class Ventana2 extends javax.swing.JFrame {
         panelDerecha.add(SeleccionadoText, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 320, -1, -1));
 
         SeleccionadoButton.setEnabled(false);
+        SeleccionadoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SeleccionadoButtonActionPerformed(evt);
+            }
+        });
         panelDerecha.add(SeleccionadoButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 310, 25, 25));
 
         casillaText.setText("Casilla");
@@ -688,7 +704,8 @@ public class Ventana2 extends javax.swing.JFrame {
 
         colocarpala = true;
         colocarbandera = false;
-        funciones.colocarImagen("/Imagenes/pala.png", SeleccionadoButton);
+        funciones.colocarImagen("/Imagenes/pala.png", pala);
+
     }//GEN-LAST:event_palaActionPerformed
 
     private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
@@ -696,7 +713,8 @@ public class Ventana2 extends javax.swing.JFrame {
 
         colocarbandera = true;
         colocarpala = false;
-        funciones.colocarImagen("/Imagenes/bandera.png", SeleccionadoButton);
+        funciones.colocarImagen("/Imagenes/bandera.png", bandera);
+
 
     }//GEN-LAST:event_banderaActionPerformed
 
@@ -801,12 +819,31 @@ public class Ventana2 extends javax.swing.JFrame {
 
 
     private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
-        tableroBuscaminas.getGrafo().empezarArbol();
-        if (tableroBuscaminas.getGrafo().RecorridoDFS) {
-            //tableroBuscaminas.getGrafo().recorrerDFS(startNode);
+        funciones.colocarImagen("/Imagenes/arbol.png", arbol);
+        if (getCasillaSeleccionada() != null) {
 
-        } else if (tableroBuscaminas.getGrafo().RecorridoBFS) {
-            //recorrerBFS(startNode);
+            tableroBuscaminas.getGrafo().empezarArbol();
+            tableroBuscaminas.getGrafo().resetearArbol();
+            Node startNode = tableroBuscaminas.getGrafo().graph.getNode(getCasillaSeleccionada());
+
+            if (botondfs.isSelected()) {
+                tableroBuscaminas.getGrafo().setRecorridoDFS(true);
+                tableroBuscaminas.getGrafo().setRecorridoBFS(false);
+            } else if (botonbfs.isSelected()) {
+                tableroBuscaminas.getGrafo().setRecorridoDFS(false);
+                tableroBuscaminas.getGrafo().setRecorridoBFS(true);
+            }
+
+            if (tableroBuscaminas.getGrafo().RecorridoDFS) {
+
+                tableroBuscaminas.getGrafo().recorrerDFSArbol(startNode);
+            } else if (tableroBuscaminas.getGrafo().RecorridoBFS) {
+
+                tableroBuscaminas.getGrafo().recorrerBFSArbol(startNode);
+
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Todavia no se ha seleccionado ninguna casilla", "Error", JOptionPane.ERROR_MESSAGE);
 
         }
 
@@ -866,12 +903,17 @@ public class Ventana2 extends javax.swing.JFrame {
     }//GEN-LAST:event_bienvenidaActionPerformed
 
     private void botondfsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botondfsActionPerformed
-        //iniciarExploracion("Depth-First Search");
+
+
     }//GEN-LAST:event_botondfsActionPerformed
 
     private void botonbfsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonbfsActionPerformed
-        //iniciarExploracion("Breadth-First Search");
+
     }//GEN-LAST:event_botonbfsActionPerformed
+
+    private void SeleccionadoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SeleccionadoButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_SeleccionadoButtonActionPerformed
 
     /**
      * Maneja el evento de click en el botón "Crear". Llama al método

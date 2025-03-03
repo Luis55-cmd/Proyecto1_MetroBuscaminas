@@ -47,6 +47,17 @@ public class ListaAdyacencia {
         }
     }
 
+    public boolean contieneMinaArbol(String valor) {
+        NodoAdyacencia actual = cabeza;
+        while (actual != null) {
+            if (actual.valor.getID().equals(valor)) {
+                return true;
+            }
+            actual = actual.siguiente;
+        }
+        return false;
+    }
+
     //MUESTRA LA LISTA
     public void MostrarLista() {
         NodoAdyacencia actual = cabeza;
