@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Luis
+ * @author Luis, Zadkiel Avendano
  */
 /**
  * Ventana2 es una clase que representa la ventana del juego MetroBuscaminas.
@@ -751,7 +751,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
         colocarpala = true;
         colocarbandera = false;
-        funciones.colocarImagen("/Imagenes/pala.png", pala);
+        funciones.colocarImagen("/Imagenes/pala.png", SeleccionadoButton);
 
     }//GEN-LAST:event_palaActionPerformed
     /**
@@ -765,7 +765,7 @@ public class Ventana2 extends javax.swing.JFrame {
 
         colocarbandera = true;
         colocarpala = false;
-        funciones.colocarImagen("/Imagenes/bandera.png", bandera);
+        funciones.colocarImagen("/Imagenes/bandera.png", SeleccionadoButton);
 
 
     }//GEN-LAST:event_banderaActionPerformed
@@ -889,7 +889,7 @@ public class Ventana2 extends javax.swing.JFrame {
      * @param evt El evento de acción generado por el clic en el botón.
      */
     private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
-        funciones.colocarImagen("/Imagenes/arbol.png", arbol);
+        funciones.colocarImagen("/Imagenes/arbol.png", SeleccionadoButton);
         if (getCasillaSeleccionada() != null) {
 
             tableroBuscaminas.getGrafo().empezarArbol();
