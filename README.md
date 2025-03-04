@@ -1,6 +1,10 @@
+Grupo: Luis Guerra y Avedaño Zadkiel 
+https://github.com/Luis55-cmd/Proyecto1_MetroBuscaminas
+
 # MetroBuscaminas
 
 MetroBuscaminas es una implementación del clásico juego de lógica "Buscaminas", desarrollado en Java utilizando la biblioteca gráfica Swing. El objetivo del juego es descubrir todas las casillas del tablero que no contienen minas, marcando las casillas sospechosas con banderas.
+
 
 ## Funcionalidades Implementadas
 
