@@ -8,35 +8,66 @@ package EstructurasDeDatos;
  *
  * @author Luis
  */
-//CLASE LISTA DE ADYANCENCIA
+/**
+ * Clase que representa una lista de adyacencia utilizada para gestionar las
+ * conexiones entre casillas en un grafo. Permite agregar vecinos, verificar si
+ * la lista está vacía, y mostrar la lista de casillas adyacentes.
+ */
 public class ListaAdyacencia {
 
-    //ATRIBUTOS
+    // ATRIBUTOS
+    /**
+     * Valor de la casilla actual.
+     */
     public Casilla valor;
+
+    /**
+     * Referencia al primer nodo de la lista.
+     */
     public NodoAdyacencia cabeza;
+
+    /**
+     * Referencia al último nodo de la lista.
+     */
     public NodoAdyacencia cola;
 
-    //CONSTRUCTOR
+    // CONSTRUCTORES
+    /**
+     * Constructor que inicializa la lista de adyacencia con una casilla
+     * específica.
+     *
+     * @param valor La casilla que representa el valor inicial de la lista.
+     */
     public ListaAdyacencia(Casilla valor) {
         this.valor = valor;
         this.cabeza = null;
         this.cola = null;
     }
 
-    //CONSTRUCTOR VACIO
+    /**
+     * Constructor vacío que inicializa una lista de adyacencia sin valores.
+     */
     public ListaAdyacencia() {
-        this.valor = valor;
+        this.valor = null;
         this.cabeza = null;
         this.cola = null;
     }
 
-    //PREGUNTA SI LA LISTA ESTA VACIA
+    // MÉTODOS
+    /**
+     * Verifica si la lista de adyacencia está vacía.
+     *
+     * @return `true` si la lista está vacía, `false` en caso contrario.
+     */
     public boolean IsEmpty() {
         return cabeza == null;
-
     }
 
-    //AGREGA UN NODO A LA LISTA
+    /**
+     * Agrega un vecino (casilla adyacente) a la lista de adyacencia.
+     *
+     * @param vecino La casilla que se agregará como vecino.
+     */
     public void agregarVecino(Casilla vecino) {
         NodoAdyacencia nuevo = new NodoAdyacencia(vecino);
         if (!IsEmpty()) {
@@ -47,6 +78,12 @@ public class ListaAdyacencia {
         }
     }
 
+    /**
+     * Verifica si la lista contiene una casilla con un ID específico.
+     *
+     * @param valor El ID de la casilla a buscar.
+     * @return `true` si la casilla está en la lista, `false` en caso contrario.
+     */
     public boolean contieneMinaArbol(String valor) {
         NodoAdyacencia actual = cabeza;
         while (actual != null) {
@@ -56,19 +93,6 @@ public class ListaAdyacencia {
             actual = actual.siguiente;
         }
         return false;
-    }
-
-    //MUESTRA LA LISTA
-    public void MostrarLista() {
-        NodoAdyacencia actual = cabeza;
-        if (!IsEmpty()) {
-            while (actual != null) {
-                System.out.print("[" + actual.valor.getPosColumna() + ", " + actual.valor.getPosFila() + "] ");
-                actual = actual.siguiente;
-            }
-            System.out.println();
-
-        }
     }
 
 }

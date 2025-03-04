@@ -28,13 +28,18 @@ import javax.swing.JFrame;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.*;
 
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Luis
+ */
+/**
+ * Ventana2 es una clase que representa la ventana del juego MetroBuscaminas.
+ * Esta ventana incluye la lógica del juego, como la creación del tablero, la
+ * colocación de banderas, la interacción con las casillas y la gestión de
+ * eventos relacionados con el juego.
  */
 public class Ventana2 extends javax.swing.JFrame {
 
@@ -43,14 +48,39 @@ public class Ventana2 extends javax.swing.JFrame {
      */
     private JButton[][] botonesTablero;
 
+    /**
+     * Instancia del tablero del Buscaminas.
+     */
     Tablero tableroBuscaminas;
 
+    /**
+     * Indica si se debe colocar una bandera en la casilla seleccionada.
+     */
     boolean colocarbandera;
+
+    /**
+     * Indica si se debe usar la pala para barrer la casilla seleccionada.
+     */
     boolean colocarpala;
+
+    /**
+     * Indica si el juego ha terminado.
+     */
     boolean juegoTerminado;
+
+    /**
+     * Almacena la casilla seleccionada por el usuario.
+     */
     String casillaSeleccionada;
+
+    /**
+     * Nodo inicial para el recorrido del árbol.
+     */
     Node startNode;
 
+    /**
+     * Contador para gestionar el número de banderas colocadas.
+     */
     int contador = 0;
 
     /**
@@ -59,13 +89,14 @@ public class Ventana2 extends javax.swing.JFrame {
     public static Ventana1 v1;
 
     /**
-     * Referencia a la clase funciones..
+     * Instancia de la clase Funciones para reutilizar métodos comunes.
      */
     Funciones funciones = new Funciones();
 
     /**
      * Constructor de la clase Ventana2. Inicializa los componentes de la
-     * ventana, establece el título.
+     * ventana, establece el título, la posición y configura los botones e
+     * imágenes.
      */
     public Ventana2() {
 
@@ -90,20 +121,32 @@ public class Ventana2 extends javax.swing.JFrame {
 
         f.setText("3");
         c.setText("3");
-        m.setText("1");
+        m.setText("3");
         panelDerecha.setVisible(false);
 
     }
 
+    /**
+     * Obtiene la casilla seleccionada por el usuario.
+     *
+     * @return La casilla seleccionada.
+     */
     public String getCasillaSeleccionada() {
         return casillaSeleccionada;
     }
 
+    /**
+     * Establece la casilla seleccionada por el usuario.
+     *
+     * @param casillaSeleccionada La casilla seleccionada.
+     */
     public void setCasillaSeleccionada(String casillaSeleccionada) {
         this.casillaSeleccionada = casillaSeleccionada;
     }
 
-    //CON ESTO BORRAMOS LOS BOTONES QUE QUEDAN CUANDO SE GANA O PIERDE UN JUEGO
+    /**
+     * Elimina los botones del tablero cuando el juego termina.
+     */
     void descargarControles() {
         if (botonesTablero != null) {
             for (int i = 0; i < botonesTablero.length; i++) {
@@ -118,9 +161,9 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     /**
-     * Inicia el juego. Lee los valores de filas, columnas y minas de los campos
-     * de texto, valida que estén dentro de los rangos permitidos y llama al
-     * método {@link #cargarCasillas(int, int, int)} para crear el tablero.
+     * Inicia un nuevo juego. Lee los valores de filas, columnas y minas de los
+     * campos de texto, valida que estén dentro de los rangos permitidos y llama
+     * al método {@link #cargarCasillas(int, int)} para crear el tablero.
      * Muestra un mensaje de error si los valores ingresados no son válidos.
      */
     private void juegoNuevo() {
@@ -148,22 +191,13 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Configura los eventos del grafo para manejar la lógica del juego, como la
+     * partida perdida, ganada, la colocación de banderas y la apertura de
+     * casillas.
+     */
     private void configurarEventosGrafo() {
-        //Sin Labmda expresion
-        /*
-        tableroBuscaminas.setEventoPartidaPerdida(new EventoPartidaPerdida() {
-            @Override
-            public void ejecutar(ListaAdyacencia t) {
-                NodoAdyacencia recorrer = t.cabeza;
-                while (recorrer != null) {
-                    botonesTablero[recorrer.valor.getPosFila()][recorrer.valor.getPosColumna()].setText("*");
-                    recorrer = recorrer.siguiente;
-                }
-            }
-        
-        });
-         */
-        //Con Labmda expresion
+
         tableroBuscaminas.getGrafo().setEventoPartidaPerdida((ListaAdyacencia t) -> {
             NodoAdyacencia recorrer = t.cabeza;
             while (recorrer != null) {
@@ -262,23 +296,27 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
-    //CON ESTO CREAMOS UN NUEVO TABLERO
+    /**
+     * Crea un nuevo tablero de Buscaminas con las dimensiones y número de minas
+     * especificados.
+     *
+     * @param filas Número de filas del tablero.
+     * @param columnas Número de columnas del tablero.
+     * @param minas Número de minas en el tablero.
+     */
     private void crearTableroBuscaminas(int filas, int columnas, int minas) {
         tableroBuscaminas = new Tablero(filas, columnas, minas);
-        tableroBuscaminas.imprimirPistas();//En la consola
 
-        System.out.println("");
-        tableroBuscaminas.imprimirTablero(); //En la consola
         configurarEventosGrafo();
     }
 
     /**
-     * Carga las casillas del tablero en el panel.Crea una matriz de botones con
-     * las dimensiones especificadas, establece su posición y tamaño, agrega un
-     * ActionListener a cada botón y los añade al panel.
+     * Carga las casillas del tablero en el panel. Crea una matriz de botones
+     * con las dimensiones especificadas, establece su posición y tamaño, agrega
+     * un ActionListener a cada botón y los añade al panel.
      *
-     * @param filas
-     * @param columnas
+     * @param filas Número de filas del tablero.
+     * @param columnas Número de columnas del tablero.
      */
     public void cargarCasillas(int filas, int columnas) {
 
@@ -338,7 +376,7 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     /**
-     * Maneja el evento de click en una casilla del tablero. Obtiene la fila y
+     * Maneja el evento de clic en una casilla del tablero. Obtiene la fila y
      * columna del botón clickeado, muestra un mensaje con las coordenadas y
      * cambia el icono del botón.
      *
@@ -354,9 +392,6 @@ public class Ventana2 extends javax.swing.JFrame {
         int fila = Integer.parseInt(coordenada[0]);
         int columna = Integer.parseInt(coordenada[1]);
 
-        String ID = tableroBuscaminas.getGrafo().casillas[fila][columna].getID();
-
-        //JOptionPane.showMessageDialog(rootPane, ID);
         if (colocarbandera == true) {
 
             tableroBuscaminas.getGrafo().seleccionarBandera(fila, columna);
@@ -380,9 +415,6 @@ public class Ventana2 extends javax.swing.JFrame {
 
     }
 
-    /**
-     * Creates new form Ventana2
-     */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -651,8 +683,14 @@ public class Ventana2 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se ejecuta al hacer clic en el botón de música. Controla la
+     * reproducción y detención de la música, así como el cambio de imagen y
+     * texto del botón.
+     *
+     * @param evt Evento de acción generado al hacer clic en el botón.
+     */
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
-        //ESTE BOTON ES PARA LA MUSICA
 
         if ("Music ON".equals(on.getText())) {
 
@@ -687,9 +725,13 @@ public class Ventana2 extends javax.swing.JFrame {
     private void mActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "crear". Este botón
+     * permite crear un nuevo tablero de juego, reiniciando el estado del juego.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
-        //ESTE BOTON ES PARA CREAR UN NUEVO TABLERO
 
         juegoTerminado = false;
         pala.setEnabled(true);
@@ -698,18 +740,28 @@ public class Ventana2 extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_crearActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "pala". Este botón
+     * permite seleccionar la herramienta "pala" para interactuar con el
+     * tablero.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void palaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_palaActionPerformed
-        //ESTE BOTON ES PARA SELECCIONAR LA PALA
 
         colocarpala = true;
         colocarbandera = false;
         funciones.colocarImagen("/Imagenes/pala.png", pala);
 
     }//GEN-LAST:event_palaActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "bandera". Este
+     * botón permite seleccionar la herramienta "bandera" para interactuar con
+     * el tablero.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void banderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_banderaActionPerformed
-        //ESTE BOTON ES PARA SELECCIONAR LA BANDERA
 
         colocarbandera = true;
         colocarpala = false;
@@ -717,9 +769,14 @@ public class Ventana2 extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_banderaActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "cargar". Este
+     * botón permite cargar una partida desde un archivo CSV.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-        //ESTE BOTON ES PARA CARGAR UNA PARTIDA DESDE UN ARCHIVO CSV
+
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
         fileChooser.setFileFilter(filtro);
@@ -781,7 +838,14 @@ public class Ventana2 extends javax.swing.JFrame {
             this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_cargarActionPerformed
-
+    /**
+     * Método que carga el tablero de Buscaminas desde un archivo CSV.
+     *
+     * @param filas Número de filas del tablero.
+     * @param columnas Número de columnas del tablero.
+     * @param minas Número de minas en el tablero.
+     * @param tableroCargado Matriz de casillas cargada desde el archivo.
+     */
     private void cargarTableroBuscaminas(int filas, int columnas, int minas, Casilla[][] tableroCargado) {
         tableroBuscaminas = new Tablero(filas, columnas, minas);
         configurarEventosGrafo();
@@ -817,7 +881,13 @@ public class Ventana2 extends javax.swing.JFrame {
         }
     }
 
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "arbol". Este botón
+     * permite visualizar el árbol de recorrido (DFS o BFS) desde una casilla
+     * seleccionada.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void arbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arbolActionPerformed
         funciones.colocarImagen("/Imagenes/arbol.png", arbol);
         if (getCasillaSeleccionada() != null) {
@@ -849,7 +919,12 @@ public class Ventana2 extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_arbolActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "guardar". Este
+     * botón permite guardar la partida actual en un archivo CSV.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         //ESTE BOTON ES PARA GUARDAR UNA PARTIDA EN UN ARCHIVO CSV
         JFileChooser fileChooser = new JFileChooser();
@@ -882,17 +957,33 @@ public class Ventana2 extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_guardarActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón
+     * "informacionbandera". Muestra un mensaje informativo sobre el uso del
+     * botón "bandera".
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void informacionbanderaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionbanderaActionPerformed
         JOptionPane.showMessageDialog(null, "Con este botón podra colocar y quitar banderas al tablero", "Información", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_informacionbanderaActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "informacionpala".
+     * Muestra un mensaje informativo sobre el uso del botón "pala".
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void informacionpalaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionpalaActionPerformed
         JOptionPane.showMessageDialog(null, "Con este botón podra barrer las casillas del tablero", "Información", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_informacionpalaActionPerformed
-
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "informacionarbol".
+     * Muestra un mensaje informativo sobre el uso del botón "arbol".
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
     private void informacionarbolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionarbolActionPerformed
         JOptionPane.showMessageDialog(null, "Con este botón podra ver el árbol de recorrido", "Información", JOptionPane.INFORMATION_MESSAGE);
 
@@ -915,22 +1006,6 @@ public class Ventana2 extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_SeleccionadoButtonActionPerformed
 
-    /**
-     * Maneja el evento de click en el botón "Crear". Llama al método
-     * {@link #iniciarJuego()} para iniciar el juego.
-     *
-     * @param evt El evento de acción.
-     */
-    /**
-     * Maneja el evento de click en el botón de encendido/apagado de la música.
-     * Cambia el icono y el texto del botón, y detiene o inicia la reproducción
-     * de la música según corresponda.
-     *
-     * @param evt El evento de acción.
-     */
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

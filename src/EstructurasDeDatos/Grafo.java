@@ -17,32 +17,105 @@ import javax.swing.JOptionPane;
  *
  * @author Luis
  */
-//Clase grafo del tablero
+/**
+ * Clase que representa un grafo utilizado para gestionar el tablero de un
+ * juego, como el Buscaminas. Contiene métodos para inicializar el tablero,
+ * colocar minas, recorrer el grafo en BFS y DFS, y gestionar eventos
+ * relacionados con el juego.
+ */
 public class Grafo {
 
-    //ATRIBUTOS
+    // ATRIBUTOS
+    /**
+     * Matriz de casillas que representa el tablero.
+     */
     public Casilla[][] casillas;
+
+    /**
+     * Número de filas del tablero.
+     */
     public int numFilas;
+
+    /**
+     * Número de columnas del tablero.
+     */
     public int numColumnas;
+
+    /**
+     * Número de minas en el tablero.
+     */
     public int numMinas;
 
+    /**
+     * Número de casillas abiertas en el tablero.
+     */
     public int numCasillasAbiertas;
+
+    /**
+     * Número de banderas colocadas en el tablero.
+     */
     public int numeroBanderas;
+
+    /**
+     * Contador auxiliar para uso interno.
+     */
     public int contador = 0;
+
+    /**
+     * Contador de visitas durante recorridos.
+     */
     public int visitCounter = 0;
+
+    /**
+     * Indica si se debe realizar un recorrido BFS.
+     */
     public boolean RecorridoBFS = false;
+
+    /**
+     * Indica si se debe realizar un recorrido DFS.
+     */
     public boolean RecorridoDFS = false;
+
+    /**
+     * Grafo visual utilizando GraphStream.
+     */
     public Graph graph;
 
-    //ATRIBUTOS EVENTOS
-    EventoPartidaPerdida eventoPartidaPerdida;
+    // ATRIBUTOS EVENTOS
+    /**
+     * Evento que se ejecuta cuando el jugador pierde la partida.
+     */
+    public EventoPartidaPerdida eventoPartidaPerdida;
 
+    /**
+     * Evento que se ejecuta cuando se abre una casilla.
+     */
     public EventoCasillaAbierta eventoCasillaAbierta;
+
+    /**
+     * Evento que se ejecuta cuando se coloca una bandera.
+     */
     public EventoBanderaAbierta eventoBanderaAbierta;
+
+    /**
+     * Evento que se ejecuta cuando se retira una bandera.
+     */
     public EventoBanderaCerrada eventoBanderaCerrada;
+
+    /**
+     * Evento que se ejecuta cuando el jugador gana la partida.
+     */
     public EventoPartidaGanada eventoPartidaGanada;
 
-    //CONSTRUCTOR
+    // CONSTRUCTOR
+    /**
+     * Constructor que inicializa el grafo con un número específico de filas,
+     * columnas y minas.
+     *
+     * @param numFilas Número de filas del tablero.
+     * @param numColumnas Número de columnas del tablero.
+     * @param numMinas Número de minas en el tablero.
+     */
     public Grafo(int numFilas, int numColumnas, int numMinas) {
         this.numeroBanderas = numMinas;
         this.numCasillasAbiertas = 0;
@@ -55,22 +128,24 @@ public class Grafo {
         inicializarGraphStream();
     }
 
+    /**
+     * Inicializa el grafo visual utilizando GraphStream.
+     */
     public void inicializarGraphStream() {
-
         graph = new SingleGraph("Buscaminas");
         graph.setAttribute("ui.stylesheet", styleSheet);
 
-        //Construir los nodos
-        for (int i = 0; i < casillas.length; i++) { //filas
-            for (int j = 0; j < casillas[i].length; j++) { //columnas
+        // Construir los nodos
+        for (int i = 0; i < casillas.length; i++) { // filas
+            for (int j = 0; j < casillas[i].length; j++) { // columnas
                 String id = casillas[i][j].getID();
                 graph.addNode(id).setAttribute("ui.label", id);
             }
         }
 
-        //Construir las aristas
-        for (int i = 0; i < casillas.length; i++) { //filas
-            for (int j = 0; j < casillas[i].length; j++) { //columnas
+        // Construir las aristas
+        for (int i = 0; i < casillas.length; i++) { // filas
+            for (int j = 0; j < casillas[i].length; j++) { // columnas
                 ListaAdyacencia vecinos = obtenerCasillasAlrededor(i, j);
                 NodoAdyacencia nodo = vecinos.cabeza;
                 while (nodo != null) {
@@ -84,10 +159,16 @@ public class Grafo {
             }
         }
         colocarMinas();
-
     }
+
+    /**
+     * Hoja de estilos para el grafo visual.
+     */
     public String styleSheet = "node { fill-color: black; } node.marked { fill-color: red; }" + "node { text-size: 20; }";
 
+    /**
+     * Pausa la ejecución del programa durante 500 milisegundos.
+     */
     public void sleep() {
         try {
             Thread.sleep(500);
@@ -96,6 +177,12 @@ public class Grafo {
         }
     }
 
+    /**
+     * Obtiene todas las aristas conectadas a un nodo.
+     *
+     * @param node El nodo del cual se obtendrán las aristas.
+     * @return Un arreglo de aristas conectadas al nodo.
+     */
     public Edge[] getEachEdge(Node node) {
         Edge[] edges = new Edge[node.getDegree()];
         for (int i = 0; i < node.getDegree(); i++) {
@@ -104,11 +191,17 @@ public class Grafo {
         return edges;
     }
 
+    /**
+     * Inicia la visualización del grafo en una ventana.
+     */
     public void empezarArbol() {
         System.setProperty("org.graphstream.ui", "swing");
         graph.display();
     }
 
+    /**
+     * Reinicia el grafo visual, eliminando atributos y recolocando minas.
+     */
     public void resetearArbol() {
         for (Node node : graph) {
             node.removeAttribute("visited");
@@ -116,12 +209,15 @@ public class Grafo {
             node.setAttribute("ui.label", node.getId());
         }
         colocarMinas();
-        System.out.println("Tablero reseteado.");
+
     }
 
+    /**
+     * Coloca minas en el grafo visual.
+     */
     private void colocarMinas() {
-        for (int i = 0; i < casillas.length; i++) { //filas
-            for (int j = 0; j < casillas[i].length; j++) { //columnas
+        for (int i = 0; i < casillas.length; i++) { // filas
+            for (int j = 0; j < casillas[i].length; j++) { // columnas
                 if (!casillas[i][j].isMina()) {
                     String mina = i + "," + j;
                     if (!mina.equals("0,0")) {
@@ -131,17 +227,26 @@ public class Grafo {
                         }
                     }
                 }
-
             }
         }
     }
 
+    /**
+     * Verifica si un nodo contiene una mina.
+     *
+     * @param node El nodo a verificar.
+     * @return `true` si el nodo contiene una mina, `false` en caso contrario.
+     */
     private boolean esMina(Node node) {
         return obtenerCasillasConMinas().contieneMinaArbol(node.getId());
     }
 
+    /**
+     * Recorre el grafo en profundidad (DFS) a partir de un nodo fuente.
+     *
+     * @param source El nodo desde el cual comenzar el recorrido.
+     */
     public void recorrerDFSArbol(Node source) {
-        System.out.println("Recorriendo en DFS...");
         Pila pila = new Pila();
         pila.apilarNodo(source);
         source.setAttribute("visited", true);
@@ -150,7 +255,6 @@ public class Grafo {
             Node next = pila.desapilarNodo();
 
             if (esMina(next)) {
-                System.out.println("💥 ¡Mina encontrada en " + next.getId() + "! Juego terminado.");
                 break;
             }
 
@@ -168,8 +272,12 @@ public class Grafo {
         }
     }
 
+    /**
+     * Recorre el grafo en anchura (BFS) a partir de un nodo fuente.
+     *
+     * @param source El nodo desde el cual comenzar el recorrido.
+     */
     public void recorrerBFSArbol(Node source) {
-        System.out.println("Recorriendo en BFS...");
         Cola cola = new Cola();
         cola.encolarNodo(source);
         source.setAttribute("visited", true);
@@ -177,7 +285,6 @@ public class Grafo {
         while (!cola.IsEmpty()) {
             Node next = cola.desencolarNodo();
             if (esMina(next)) {
-                System.out.println("💥 ¡Mina encontrada en " + next.getId() + "! Juego terminado.");
                 break;
             }
 
@@ -195,15 +302,19 @@ public class Grafo {
         }
     }
 
+    /**
+     * Recorre el grafo en anchura (BFS) a partir de una posición específica.
+     *
+     * @param posFila Fila de la casilla inicial.
+     * @param posColumna Columna de la casilla inicial.
+     */
     private void recorrerBFS(int posFila, int posColumna) {
         Cola cola = new Cola();
         cola.encolar(casillas[posFila][posColumna]);
         while (!cola.IsEmpty()) {
             Casilla actual = cola.desencolar();
             eventoCasillaAbierta.ejecutar(actual);
-            System.out.println("Visitando (BFS): (" + actual.getPosFila() + ", " + actual.getPosColumna() + ")");
 
-            //graph.getNode(actual.getPosFila() + ", " + actual.getPosColumna()).setAttribute("ui.style", "fill-color: blue;");
             ListaAdyacencia vecinos = obtenerCasillasAlrededor(actual.getPosFila(), actual.getPosColumna());
             NodoAdyacencia nodo = vecinos.cabeza;
             while (nodo != null) {
@@ -218,21 +329,22 @@ public class Grafo {
                 nodo = nodo.siguiente;
             }
         }
-
     }
 
+    /**
+     * Recorre el grafo en profundidad (DFS) a partir de una posición
+     * específica.
+     *
+     * @param posFila Fila de la casilla inicial.
+     * @param posColumna Columna de la casilla inicial.
+     */
     private void recorrerDFS(int posFila, int posColumna) {
         Pila pila = new Pila();
         pila.apilar(casillas[posFila][posColumna]);
 
         while (!pila.IsEmpty()) {
             Casilla actual = pila.desapilar();
-
-            // Ejecutar evento para cada casilla visitada
             eventoCasillaAbierta.ejecutar(actual);
-
-            // Imprimir en consola la casilla visitada
-            System.out.println("Visitando (DFS): (" + actual.getPosFila() + ", " + actual.getPosColumna() + ")");
 
             ListaAdyacencia casillasAlrededor = obtenerCasillasAlrededor(actual.getPosFila(), actual.getPosColumna());
             NodoAdyacencia nodo = casillasAlrededor.cabeza;
@@ -241,35 +353,35 @@ public class Grafo {
                 Casilla vecino = nodo.valor;
                 if (!vecino.isAbierta() && !vecino.isMina()) {
                     marcarCasillaAbierta(vecino.getPosFila(), vecino.getPosColumna());
-
-                    eventoCasillaAbierta.ejecutar(vecino); // Ejecutar evento para vecino
-
+                    eventoCasillaAbierta.ejecutar(vecino);
                     if (vecino.getNumMinasAlrededor() == 0) {
                         pila.apilar(vecino);
                     }
-
                 }
                 nodo = nodo.siguiente;
             }
         }
     }
 
-    //CREA LAS CASILLAS RECORRIENDO LA MATRIZ
+    /**
+     * Inicializa la matriz de casillas del tablero.
+     */
     public void inicializarCasilla() {
         casillas = new Casilla[this.numFilas][this.numColumnas];
-        for (int i = 0; i < casillas.length; i++) { //filas
-            for (int j = 0; j < casillas[i].length; j++) { //columnas
-
-                //char columnaLetra = (char) ('A' + j);
+        for (int i = 0; i < casillas.length; i++) { // filas
+            for (int j = 0; j < casillas[i].length; j++) { // columnas
+                char columnaLetra = (char) ('A' + j);
                 casillas[i][j] = new Casilla(i, j);
+                casillas[i][j].setEtiqueta(columnaLetra + "," + i);
                 casillas[i][j].setID(i + "," + j);
-
             }
         }
         generarMinas();
     }
 
-    //GENERA LAS MINAS EN LAS CASILLAS Y LAS ACTUALIZA
+    /**
+     * Genera minas aleatorias en el tablero.
+     */
     private void generarMinas() {
         int minasGeneradas = 0;
         while (minasGeneradas != numMinas) {
@@ -281,10 +393,11 @@ public class Grafo {
             }
         }
         actualizarNumeroMinasAlrededor();
-
     }
 
-    //ACTUALIZO EL NUMERO DE MINAS ALREDEDOR
+    /**
+     * Actualiza el número de minas alrededor de cada casilla.
+     */
     private void actualizarNumeroMinasAlrededor() {
         for (int i = 0; i < casillas.length; i++) {
             for (int j = 0; j < casillas[i].length; j++) {
@@ -294,14 +407,19 @@ public class Grafo {
                     while (actual != null) {
                         actual.valor.incrementarNumeroMinasAlrededor();
                         actual = actual.siguiente;
-
                     }
                 }
             }
         }
     }
 
-    //LISTA DE CASILLAS ADYACENTES
+    /**
+     * Obtiene las casillas adyacentes a una posición específica.
+     *
+     * @param posFila Fila de la casilla.
+     * @param posColumna Columna de la casilla.
+     * @return Una lista de casillas adyacentes.
+     */
     private ListaAdyacencia obtenerCasillasAlrededor(int posFila, int posColumna) {
         ListaAdyacencia listaCasillas = new ListaAdyacencia();
         for (int i = 0; i < 8; i++) {
@@ -310,69 +428,97 @@ public class Grafo {
             switch (i) {
                 case 0:
                     tmpPosFila--;
-                    break; //Arriba
+                    break; // Arriba
                 case 1:
                     tmpPosFila--;
                     tmpPosColumna++;
-                    break; //Arriba Derecha
+                    break; // Arriba Derecha
                 case 2:
                     tmpPosColumna++;
-                    break; //Derecha
+                    break; // Derecha
                 case 3:
                     tmpPosColumna++;
                     tmpPosFila++;
-                    break; //Derecha Abajo
+                    break; // Derecha Abajo
                 case 4:
                     tmpPosFila++;
-                    break; //Abajo
+                    break; // Abajo
                 case 5:
                     tmpPosFila++;
                     tmpPosColumna--;
-                    break; //Abajo Izquierda
+                    break; // Abajo Izquierda
                 case 6:
                     tmpPosColumna--;
-                    break; //Izquierda
+                    break; // Izquierda
                 case 7:
                     tmpPosFila--;
                     tmpPosColumna--;
-                    break; //Izquierda Arriba
+                    break; // Izquierda Arriba
             }
 
             if (tmpPosFila >= 0 && tmpPosFila < this.casillas.length
                     && tmpPosColumna >= 0 && tmpPosColumna < this.casillas[0].length) {
                 listaCasillas.agregarVecino(this.casillas[tmpPosFila][tmpPosColumna]);
             }
-
         }
         return listaCasillas;
     }
 
-    //EVENTO DE PARTIDA PERDIDA PARA NOTIFICAR AL JFRAME
+    /**
+     * Establece el evento de partida perdida.
+     *
+     * @param eventoPartidaPerdida El evento a ejecutar cuando se pierde la
+     * partida.
+     */
     public void setEventoPartidaPerdida(EventoPartidaPerdida eventoPartidaPerdida) {
         this.eventoPartidaPerdida = eventoPartidaPerdida;
     }
 
-    //EVENTO DE CASILLA ABIERTA PARA NOTIFICAR AL JFRAME
+    /**
+     * Establece el evento de casilla abierta.
+     *
+     * @param eventoCasillaAbierta El evento a ejecutar cuando se abre una
+     * casilla.
+     */
     public void setEventoCasillaAbierta(EventoCasillaAbierta eventoCasillaAbierta) {
         this.eventoCasillaAbierta = eventoCasillaAbierta;
     }
 
-    //EVENTO DE PARTIDA GANADA PARA NOTIFICAR AL JFRAME
+    /**
+     * Establece el evento de partida ganada.
+     *
+     * @param eventoPartidaGanada El evento a ejecutar cuando se gana la
+     * partida.
+     */
     public void setEventoPartidaGanada(EventoPartidaGanada eventoPartidaGanada) {
         this.eventoPartidaGanada = eventoPartidaGanada;
     }
 
-    //EVENTO DE BANDERA ABIERTA PARA NOTIFICAR AL JFRAME
+    /**
+     * Establece el evento de bandera abierta.
+     *
+     * @param eventoBanderaAbierta El evento a ejecutar cuando se coloca una
+     * bandera.
+     */
     public void setEventoBanderaAbierta(EventoBanderaAbierta eventoBanderaAbierta) {
         this.eventoBanderaAbierta = eventoBanderaAbierta;
     }
 
-    //EVENTO DE BANDERA CERRADA PARA NOTIFICAR AL JFRAME
+    /**
+     * Establece el evento de bandera cerrada.
+     *
+     * @param eventoBanderaCerrada El evento a ejecutar cuando se retira una
+     * bandera.
+     */
     public void setEventoBanderaCerrada(EventoBanderaCerrada eventoBanderaCerrada) {
         this.eventoBanderaCerrada = eventoBanderaCerrada;
     }
 
-    //LISTA DE CASILLAS CON MINAS
+    /**
+     * Obtiene una lista de casillas que contienen minas.
+     *
+     * @return Una lista de casillas con minas.
+     */
     public ListaAdyacencia obtenerCasillasConMinas() {
         ListaAdyacencia casillasConMinas = new ListaAdyacencia();
         for (int i = 0; i < casillas.length; i++) {
@@ -385,60 +531,28 @@ public class Grafo {
         return casillasConMinas;
     }
 
-    //LISTA DE CASILLAS 
+    /**
+     * Obtiene una lista de todas las casillas del tablero.
+     *
+     * @return Una lista de todas las casillas.
+     */
     public ListaAdyacencia obtenerCasillas() {
         ListaAdyacencia casillaslistado = new ListaAdyacencia();
         for (int i = 0; i < casillas.length; i++) {
             for (int j = 0; j < casillas[i].length; j++) {
-
                 casillaslistado.agregarVecino(casillas[i][j]);
             }
-
         }
         return casillaslistado;
     }
 
-    public void seleccionarCasilla(int posFila, int posColumna) {
-
-        if (casillas[posFila][posColumna].isBandera()) {
-            JOptionPane.showMessageDialog(null, "Error la casilla esta marcada con una bandera", "Error", JOptionPane.ERROR_MESSAGE);
-
-        } else {
-            eventoCasillaAbierta.ejecutar(casillas[posFila][posColumna]);
-
-            //LA CASILLA SEA MINA
-            if (this.casillas[posFila][posColumna].isMina()) {
-
-                if (eventoPartidaPerdida != null) {
-                    eventoPartidaPerdida.ejecutar(obtenerCasillasConMinas());
-
-                }
-
-            } else if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
-                marcarCasillaAbierta(posFila, posColumna);
-                if (PartidaGanada()) {
-                    eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-
-                }
-                if (RecorridoDFS) {
-                    recorrerDFS(posFila, posColumna);
-                } else if (RecorridoBFS) {
-                    recorrerBFS(posFila, posColumna);
-                }
-
-            } else {
-                marcarCasillaAbierta(posFila, posColumna);
-                if (PartidaGanada()) {
-                    eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-
-                }
-            }
-
-        }
-
-    }
-
-    /*
+    /**
+     * Selecciona una casilla en el tablero, abriéndola o marcándola con una
+     * bandera.
+     *
+     * @param posFila Fila de la casilla.
+     * @param posColumna Columna de la casilla.
+     */
     public void seleccionarCasilla(int posFila, int posColumna) {
         if (casillas[posFila][posColumna].isBandera()) {
             JOptionPane.showMessageDialog(null, "Error: la casilla está marcada con una bandera", "Error", JOptionPane.ERROR_MESSAGE);
@@ -467,100 +581,91 @@ public class Grafo {
             } else if (RecorridoBFS) {
                 recorrerBFS(posFila, posColumna);
             }
-
         }
     }
+
+    /**
+     * Selecciona una casilla para colocar o retirar una bandera.
+     *
+     * @param posFila Fila de la casilla.
+     * @param posColumna Columna de la casilla.
      */
-    //SELECCIONAR UNA CASILLA EN EL JFRAME CON LA BANDERA
     public void seleccionarBandera(int posFila, int posColumna) {
         if (casillas[posFila][posColumna].isAbierta()) {
-            JOptionPane.showMessageDialog(null, "Error la casilla ya esta abierta", "Error", JOptionPane.ERROR_MESSAGE);
-
+            JOptionPane.showMessageDialog(null, "Error: la casilla ya está abierta", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             if (!casillas[posFila][posColumna].isBandera() && contador < numMinas) {
-                //numeroBanderas--;
                 casillas[posFila][posColumna].setBandera(true);
                 eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
             } else if (casillas[posFila][posColumna].isBandera()) {
-                //numeroBanderas++;
                 casillas[posFila][posColumna].setBandera(false);
                 eventoBanderaCerrada.ejecutar(casillas[posFila][posColumna]);
             } else {
-                JOptionPane.showMessageDialog(null, "Error no puede colocar mas banderas", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error: no puede colocar más banderas", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    //MARCAR UNA CASILLA COMO ABIERTA
+    /**
+     * Marca una casilla como abierta.
+     *
+     * @param posFila Fila de la casilla.
+     * @param posColumna Columna de la casilla.
+     */
     void marcarCasillaAbierta(int posFila, int posColumna) {
         if (!casillas[posFila][posColumna].isAbierta()) {
             numCasillasAbiertas++;
             casillas[posFila][posColumna].setAbierta(true);
         }
-
     }
 
-    //SI SE ABREN TODAS LAS CASILLAS QUE NO SEAN MINAS ES UNA PARTIDA GANADA
+    /**
+     * Verifica si el jugador ha ganado la partida.
+     *
+     * @return `true` si todas las casillas sin minas están abiertas, `false` en
+     * caso contrario.
+     */
     public boolean PartidaGanada() {
         return numCasillasAbiertas >= (numFilas * numColumnas) - numMinas;
-
     }
 
-    //IMPRIMIR EN PANTALLA LA LISTA DE ADYACENCIAS DE LAS CASILLAS
-    public void imprimirGrafo() {
-        System.out.println("    Grafo:");
-
-        for (int i = 0; i < this.casillas.length; i++) {        //fila
-            for (int j = 0; j < this.casillas[i].length; j++) {     //columna
-
-                System.out.println("");
-                System.out.println("-Casilla/Vertice: [" + j + "," + i + "]");
-
-                System.out.print("Adyacentes: ");
-                obtenerCasillasAlrededor(i, j).MostrarLista();
-            }
-        }
-    }
-
-    //IMPRIMO EL TABLERO EN PANTALLA
-    public void imprimirTablero() {
-
-        for (int i = 0; i < casillas.length; i++) { //filas
-            for (int j = 0; j < casillas[i].length; j++) { //columnas
-                System.out.print(casillas[i][j].isMina() ? "*" : "0");
-
-            }
-            System.out.println("");
-        }
-    }
-
-    //IMPRIMO EL TABLERO CON EL NUMERO DE MINAS ALREDEDOR EN PANTALLA
-    public void imprimirPistas() {
-
-        for (int i = 0; i < casillas.length; i++) {
-            for (int j = 0; j < casillas[i].length; j++) {
-                System.out.print(casillas[i][j].getNumMinasAlrededor());
-
-            }
-            System.out.println("");
-        }
-
-    }
-
+    /**
+     * Verifica si se está realizando un recorrido BFS.
+     *
+     * @return `true` si se está realizando un recorrido BFS, `false` en caso
+     * contrario.
+     */
     public boolean isRecorridoBFS() {
         return RecorridoBFS;
     }
 
+    /**
+     * Establece si se debe realizar un recorrido BFS.
+     *
+     * @param RecorridoBFS `true` para habilitar el recorrido BFS, `false` para
+     * deshabilitarlo.
+     */
     public void setRecorridoBFS(boolean RecorridoBFS) {
         this.RecorridoBFS = RecorridoBFS;
     }
 
+    /**
+     * Verifica si se está realizando un recorrido DFS.
+     *
+     * @return `true` si se está realizando un recorrido DFS, `false` en caso
+     * contrario.
+     */
     public boolean isRecorridoDFS() {
         return RecorridoDFS;
     }
 
+    /**
+     * Establece si se debe realizar un recorrido DFS.
+     *
+     * @param RecorridoDFS `true` para habilitar el recorrido DFS, `false` para
+     * deshabilitarlo.
+     */
     public void setRecorridoDFS(boolean RecorridoDFS) {
         this.RecorridoDFS = RecorridoDFS;
     }
-
 }

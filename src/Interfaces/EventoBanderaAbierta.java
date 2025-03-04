@@ -10,9 +10,15 @@ import EstructurasDeDatos.*;
  *
  * @author Luis
  */
-//INTERFAZ PARA NOTIFICAR AL JFRAME QUE SE ABRIO UNA BANDERA
+/**
+ * Interfaz para notificar al JFrame que se abrió una bandera en una casilla.
+ */
 public interface EventoBanderaAbierta {
 
+    /**
+     * Método que se ejecuta cuando se abre una bandera en una casilla.
+     *
+     * @param casilla La casilla en la que se abrió la bandera.
+     */
     void ejecutar(Casilla casilla);
-
 }

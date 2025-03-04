@@ -8,13 +8,29 @@ package EstructurasDeDatos;
  *
  * @author Luis
  */
+/**
+ * Clase que representa un nodo en una lista de adyacencia. Cada nodo contiene
+ * una casilla y una referencia al siguiente nodo en la lista.
+ */
 public class NodoAdyacencia {
 
-    //ATRIBUTOS
+    // ATRIBUTOS
+    /**
+     * La casilla que representa el valor del nodo.
+     */
     public Casilla valor;
+
+    /**
+     * Referencia al siguiente nodo en la lista de adyacencia.
+     */
     public NodoAdyacencia siguiente;
 
-    //CONSTRUCTOR
+    // CONSTRUCTOR
+    /**
+     * Constructor que inicializa un nodo con una casilla específica.
+     *
+     * @param valor La casilla que se asignará como valor del nodo.
+     */
     public NodoAdyacencia(Casilla valor) {
         this.valor = valor;
         this.siguiente = null;

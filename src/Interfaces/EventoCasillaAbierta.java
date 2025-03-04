@@ -10,8 +10,15 @@ import EstructurasDeDatos.*;
  *
  * @author Luis
  */
-//INTERFAZ PARA NOTIFICAR AL JFRAME QUE SE ABRIO UNA CASILLA
+/**
+ * Interfaz para notificar al JFrame que se abrió una casilla.
+ */
 public interface EventoCasillaAbierta {
 
+    /**
+     * Método que se ejecuta cuando se abre una casilla.
+     *
+     * @param casilla La casilla que se abrió.
+     */
     void ejecutar(Casilla casilla);
 }

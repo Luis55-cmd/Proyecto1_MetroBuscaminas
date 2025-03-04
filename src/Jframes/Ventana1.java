@@ -16,18 +16,26 @@ import java.net.URL;
  *
  * @author Luis, Zadkiel Avendano
  */
+/**
+ * Ventana1 es una clase que representa la ventana principal del juego
+ * MetroBuscaminas. Esta ventana incluye funcionalidades como la reproducción de
+ * música y la navegación a otras ventanas.
+ */
 public class Ventana1 extends javax.swing.JFrame {
 
-    //ESTO ES PARA LA MUSICA
+    /**
+     * Clip de audio para reproducir música en la ventana.
+     */
     public static Clip clip;
 
     /**
-     * Referencia a la clase funciones..
+     * Instancia de la clase Funciones para reutilizar métodos comunes.
      */
     Funciones funciones = new Funciones();
 
     /**
-     * Creates new form Ventana1
+     * Constructor de la clase Ventana1. Inicializa la ventana, configura el
+     * título, la posición, la imagen de fondo y la música.
      */
     public Ventana1() {
         setTitle("MetroBuscaminas");
@@ -42,13 +50,13 @@ public class Ventana1 extends javax.swing.JFrame {
         on.setBorder(null);
         on.setBackground(new Color(0, 0, 0, 0));
 
-        //ESTO ES PARA EL FONDO
+        // Configuración del fondo de la ventana
         ImageIcon fon = new ImageIcon(getClass().getResource("/Imagenes/fondo.png"));
         Icon fondo5 = new ImageIcon(fon.getImage().getScaledInstance(pantalla.getWidth(), pantalla.getHeight(), 0));
         pantalla.setIcon(fondo5);
 
         this.repaint();
-        //ESTO ES PARA LA MUSICA       
+        // Configuración de la música 
         try {
             URL audioPath = getClass().getClassLoader().getResource("Musica/song.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioPath);
@@ -56,6 +64,7 @@ public class Ventana1 extends javax.swing.JFrame {
             clip.open(audioStream);
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            // Manejo de excepciones en caso de error al cargar la música
         }
 
     }
@@ -105,6 +114,13 @@ public class Ventana1 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Método que se ejecuta al hacer clic en el botón "Iniciar". Oculta la
+     * ventana actual y muestra la Ventana2.
+     *
+     * @param evt Evento de acción generado al hacer clic en el botón.
+     */
+
     private void iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarActionPerformed
         //BOTON PARA INICIAR EL JUEGO
 
@@ -113,6 +129,13 @@ public class Ventana1 extends javax.swing.JFrame {
         ventana2.setVisible(true);
     }//GEN-LAST:event_iniciarActionPerformed
 
+    /**
+     * Método que se ejecuta al hacer clic en el botón de música. Controla la
+     * reproducción y detención de la música, así como el cambio de imagen y
+     * texto del botón.
+     *
+     * @param evt Evento de acción generado al hacer clic en el botón.
+     */
     @SuppressWarnings("CallToPrintStackTrace")
     private void onActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onActionPerformed
         //BOTON PARA LA MUSICA
