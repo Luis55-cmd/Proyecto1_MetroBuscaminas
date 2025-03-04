@@ -5,6 +5,12 @@ https://github.com/Luis55-cmd/Proyecto1_MetroBuscaminas
 
 MetroBuscaminas es una implementación del clásico juego de lógica "Buscaminas", desarrollado en Java utilizando la biblioteca gráfica Swing. El objetivo del juego es descubrir todas las casillas del tablero que no contienen minas, marcando las casillas sospechosas con banderas.
 
+## Instalacion
+- Copiar el repositorio GitHub a tu computadora.
+- Abrir el proyecto en `NetBeans` o cualquier otro editor de tu preferencia.
+- Darle al boton de `Run` para ejecutar el proyecto.
+> [!IMPORTANT]
+> Importar las librerias necesarias `.jar` de la carpeta `librerias` adjuntada en el proyecto para su correcto funcionamiento.
 
 ## Funcionalidades Implementadas
 
