@@ -338,6 +338,7 @@ public class Ventana2 extends javax.swing.JFrame {
         });
 
         tableroBuscaminas.getGrafo().setEventoPartidaGanada((ListaAdyacencia t) -> {
+           
             NodoAdyacencia recorrer = t.cabeza;
             while (recorrer != null) {
                 int i = recorrer.valor.getPosFila();

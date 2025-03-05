@@ -547,8 +547,8 @@ public class Grafo {
     }
 
     /**
-     * Selecciona una casilla en el tablero, abriéndola o marcándola con una
-     * bandera.
+     * Selecciona una casilla en el tablero, abriéndola o marcándola
+     *
      *
      * @param posFila Fila de la casilla.
      * @param posColumna Columna de la casilla.
@@ -568,21 +568,48 @@ public class Grafo {
             return;
         }
 
-        marcarCasillaAbierta(posFila, posColumna);
-
-        if (PartidaGanada()) {
-            eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
-            return;
-        }
-
         if (casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
+            marcarCasillaAbierta(posFila, posColumna);
             if (RecorridoDFS) {
                 recorrerDFS(posFila, posColumna);
             } else if (RecorridoBFS) {
                 recorrerBFS(posFila, posColumna);
             }
+        } else {
+            marcarCasillaAbierta(posFila, posColumna);
+        }
+
+        if (PartidaGanada()) {
+            eventoPartidaGanada.ejecutar(obtenerCasillasConMinas());
+            return;
         }
     }
+
+    /*
+    public void seleccionarCasilla(int posFila, int posColumna) {
+        if (!this.generacionMinas) {
+            this.generarMinas(posFila, posColumna);
+        }
+        eventoCasillaAbierta.accept(this.casillas[posFila][posColumna]);
+        if (this.casillas[posFila][posColumna].isMina()) {
+            eventoPartidaPerdida.accept(obtenerCasillasConMinas());
+        } else if (this.casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
+            marcarCasillaAbierta(posFila, posColumna);
+            List<Casilla> casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
+            for (Casilla casilla : casillasAlrededor) {
+                if (!casilla.isAbierta()) {
+                    seleccionarCasilla(casilla.getPosFila(), casilla.getPosColumna());
+                }
+            }
+        } else {
+            marcarCasillaAbierta(posFila, posColumna);
+        }
+        if (partidaGanada()) {
+            eventoPartidaGanada.accept(obtenerCasillasConMinas());
+        }
+    }
+
+     */
 
     /**
      * Selecciona una casilla para colocar o retirar una bandera.
@@ -594,7 +621,7 @@ public class Grafo {
         if (casillas[posFila][posColumna].isAbierta()) {
             JOptionPane.showMessageDialog(null, "Error: la casilla ya está abierta", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            
+
             if (!casillas[posFila][posColumna].isBandera() && contador < numMinas) {
                 casillas[posFila][posColumna].setBandera(true);
                 eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
@@ -628,7 +655,9 @@ public class Grafo {
      * caso contrario.
      */
     public boolean PartidaGanada() {
+
         return numCasillasAbiertas >= (numFilas * numColumnas) - numMinas;
+
     }
 
     /**
