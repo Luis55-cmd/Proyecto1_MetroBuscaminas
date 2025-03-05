@@ -597,7 +597,7 @@ public class Grafo {
         if (casillas[posFila][posColumna].isAbierta()) {
             JOptionPane.showMessageDialog(null, "Error: la casilla ya está abierta", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-
+            System.out.println(contador);
             if (!casillas[posFila][posColumna].isBandera() && contador < numMinas) {
                 casillas[posFila][posColumna].setBandera(true);
                 eventoBanderaAbierta.ejecutar(casillas[posFila][posColumna]);
@@ -605,6 +605,7 @@ public class Grafo {
             } else if (casillas[posFila][posColumna].isBandera()) {
                 casillas[posFila][posColumna].setBandera(false);
                 eventoBanderaCerrada.ejecutar(casillas[posFila][posColumna]);
+                contador--;
             } else {
                 JOptionPane.showMessageDialog(null, "Error: no puede colocar más banderas", "Error", JOptionPane.ERROR_MESSAGE);
             }
