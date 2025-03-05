@@ -187,8 +187,126 @@ public class Ventana2 extends javax.swing.JFrame {
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+        GuardarPartidaItem.setEnabled(true);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
+    }
+    
+    /**
+     * Abre un cuadro de diálogo para cargar un archivo CSV que contiene el estado de un juego guardado.
+     * Restablece los botones del menú y la interfaz de usuario, y carga el estado del juego desde el archivo.
+     * 
+     * @throws HeadlessException si el código está en un entorno de servidor y no hay interfaz gráfica disponible.
+     * @throws NumberFormatException si los datos del archivo CSV no pueden ser convertidos a números.
+     * @throws IOException si ocurre un error al leer el archivo CSV.
+     */
+    
+    
+    /**
+    * Guarda el estado actual del juego en un archivo CSV seleccionado por el usuario.
+    * Muestra un cuadro de diálogo para seleccionar la ubicación y el nombre del archivo.
+    * Incluye la configuración del tablero y el estado de cada casilla.
+    * 
+    * @throws HeadlessException si el código está en un entorno de servidor y no hay interfaz gráfica disponible.
+    * @throws IOException si ocurre un error al guardar el archivo CSV.
+    */
+    private void guardarJuego(){
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showSaveDialog(this);
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            try (PrintWriter pw = new PrintWriter(archivo)) {
+                // Guardar configuración
+                pw.println(tableroBuscaminas.getGrafo().numFilas + ","
+                        + tableroBuscaminas.getGrafo().numColumnas + ","
+                        + tableroBuscaminas.getGrafo().numMinas);
+
+                // Guardar casillas
+                for (int i = 0; i < tableroBuscaminas.getGrafo().casillas.length; i++) {
+                    for (int j = 0; j < tableroBuscaminas.getGrafo().casillas[i].length; j++) {
+                        Casilla casilla = tableroBuscaminas.getGrafo().casillas[i][j];
+                        pw.println(j + "," + i + ","
+                                + casilla.isMina() + ","
+                                + casilla.isBandera() + ","
+                                + casilla.isAbierta() + ","
+                                + casilla.getNumMinasAlrededor());
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "Partida guardada exitosamente");
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private void juegoCargado(){
+        
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
+        fileChooser.setFileFilter(filtro);
+
+        int seleccion = fileChooser.showOpenDialog(this);
+        contador = 0; // Reiniciar contador
+
+        if (seleccion == JFileChooser.APPROVE_OPTION) {
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            // restablece los botones del menu
+            juegoTerminado = false;
+            pala.setEnabled(true);
+            bandera.setEnabled(true);
+
+            File archivo = fileChooser.getSelectedFile();
+
+            try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+                // Leer configuración inicial
+                String[] datosTablero = br.readLine().split(",");
+                int filas = Integer.parseInt(datosTablero[0]);
+                int columnas = Integer.parseInt(datosTablero[1]);
+                int minas = Integer.parseInt(datosTablero[2]);
+
+                // Inicializar tablero
+                Casilla[][] tableroCargado = new Casilla[filas][columnas];
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] datos = linea.split(",");
+                    int columna = Integer.parseInt(datos[0]);
+                    int fila = Integer.parseInt(datos[1]);
+                    boolean esMina = Boolean.parseBoolean(datos[2]);
+                    boolean esBandera = Boolean.parseBoolean(datos[3]);
+                    boolean esAbierta = Boolean.parseBoolean(datos[4]);
+                    int numMinas = Integer.parseInt(datos[5]);
+
+                    Casilla casilla = new Casilla(fila, columna);
+                    casilla.setMina(esMina);
+                    casilla.setBandera(esBandera);
+                    casilla.setAbierta(esAbierta);
+                    casilla.setNumMinasAlrededor(numMinas);
+                    tableroCargado[fila][columna] = casilla;
+
+                    if (esBandera) {
+                        contador++;
+                    }
+                }
+
+                // Actualizar interfaz
+                panelDerecha.setVisible(true);
+                panelInformativo.setVisible(false);
+                descargarControles();
+                cargarCasillas(filas, columnas);
+                cargarTableroBuscaminas(filas, columnas, minas, tableroCargado);
+                banderas.setText("Banderas: " + (minas - contador));
+                repaint();
+
+            } catch (IOException | NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            GuardarPartidaItem.setEnabled(true);
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
     }
 
     /**
@@ -461,6 +579,14 @@ public class Ventana2 extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         botondfs = new javax.swing.JRadioButton();
         botonbfs = new javax.swing.JRadioButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        NuevaPartidaItem = new javax.swing.JMenuItem();
+        GuardarPartidaItem = new javax.swing.JMenuItem();
+        CargarPartidaItem = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        ComoJugarItem = new javax.swing.JMenuItem();
+        CreditosItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -680,6 +806,62 @@ public class Ventana2 extends javax.swing.JFrame {
 
         getContentPane().add(panelSuperior, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 630, 110));
 
+        jMenu1.setText("Opciones");
+
+        NuevaPartidaItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        NuevaPartidaItem.setText("Nueva Partida");
+        NuevaPartidaItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NuevaPartidaItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(NuevaPartidaItem);
+
+        GuardarPartidaItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        GuardarPartidaItem.setText("Guardar Partida");
+        GuardarPartidaItem.setEnabled(false);
+        GuardarPartidaItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarPartidaItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(GuardarPartidaItem);
+
+        CargarPartidaItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        CargarPartidaItem.setText("Cargar Partida");
+        CargarPartidaItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CargarPartidaItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(CargarPartidaItem);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Ayuda");
+
+        ComoJugarItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        ComoJugarItem.setText("Como jugar");
+        ComoJugarItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComoJugarItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(ComoJugarItem);
+
+        CreditosItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        CreditosItem.setText("Creditos");
+        CreditosItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CreditosItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(CreditosItem);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -776,67 +958,7 @@ public class Ventana2 extends javax.swing.JFrame {
      * @param evt El evento de acción generado por el clic en el botón.
      */
     private void cargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarActionPerformed
-
-        JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
-        fileChooser.setFileFilter(filtro);
-
-        int seleccion = fileChooser.showOpenDialog(this);
-        contador = 0; // Reiniciar contador
-
-        if (seleccion == JFileChooser.APPROVE_OPTION) {
-            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-            // restablece los botones del menu
-            juegoTerminado = false;
-            pala.setEnabled(true);
-            bandera.setEnabled(true);
-
-            File archivo = fileChooser.getSelectedFile();
-
-            try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
-                // Leer configuración inicial
-                String[] datosTablero = br.readLine().split(",");
-                int filas = Integer.parseInt(datosTablero[0]);
-                int columnas = Integer.parseInt(datosTablero[1]);
-                int minas = Integer.parseInt(datosTablero[2]);
-
-                // Inicializar tablero
-                Casilla[][] tableroCargado = new Casilla[filas][columnas];
-                String linea;
-                while ((linea = br.readLine()) != null) {
-                    String[] datos = linea.split(",");
-                    int columna = Integer.parseInt(datos[0]);
-                    int fila = Integer.parseInt(datos[1]);
-                    boolean esMina = Boolean.parseBoolean(datos[2]);
-                    boolean esBandera = Boolean.parseBoolean(datos[3]);
-                    boolean esAbierta = Boolean.parseBoolean(datos[4]);
-                    int numMinas = Integer.parseInt(datos[5]);
-
-                    Casilla casilla = new Casilla(fila, columna);
-                    casilla.setMina(esMina);
-                    casilla.setBandera(esBandera);
-                    casilla.setAbierta(esAbierta);
-                    casilla.setNumMinasAlrededor(numMinas);
-                    tableroCargado[fila][columna] = casilla;
-
-                    if (esBandera) {
-                        contador++;
-                    }
-                }
-
-                // Actualizar interfaz
-                descargarControles();
-                cargarCasillas(filas, columnas);
-                cargarTableroBuscaminas(filas, columnas, minas, tableroCargado);
-                banderas.setText("Banderas: " + (minas - contador));
-                repaint();
-
-            } catch (IOException | NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Error al cargar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
+        juegoCargado();
     }//GEN-LAST:event_cargarActionPerformed
     /**
      * Método que carga el tablero de Buscaminas desde un archivo CSV.
@@ -927,35 +1049,7 @@ public class Ventana2 extends javax.swing.JFrame {
      */
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         //ESTE BOTON ES PARA GUARDAR UNA PARTIDA EN UN ARCHIVO CSV
-        JFileChooser fileChooser = new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
-        fileChooser.setFileFilter(filtro);
-
-        int seleccion = fileChooser.showSaveDialog(this);
-        if (seleccion == JFileChooser.APPROVE_OPTION) {
-            File archivo = fileChooser.getSelectedFile();
-            try (PrintWriter pw = new PrintWriter(archivo)) {
-                // Guardar configuración
-                pw.println(tableroBuscaminas.getGrafo().numFilas + ","
-                        + tableroBuscaminas.getGrafo().numColumnas + ","
-                        + tableroBuscaminas.getGrafo().numMinas);
-
-                // Guardar casillas
-                for (int i = 0; i < tableroBuscaminas.getGrafo().casillas.length; i++) {
-                    for (int j = 0; j < tableroBuscaminas.getGrafo().casillas[i].length; j++) {
-                        Casilla casilla = tableroBuscaminas.getGrafo().casillas[i][j];
-                        pw.println(j + "," + i + ","
-                                + casilla.isMina() + ","
-                                + casilla.isBandera() + ","
-                                + casilla.isAbierta() + ","
-                                + casilla.getNumMinasAlrededor());
-                    }
-                }
-                JOptionPane.showMessageDialog(this, "Partida guardada exitosamente");
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        guardarJuego();
     }//GEN-LAST:event_guardarActionPerformed
     /**
      * Método que se ejecuta cuando se hace clic en el botón
@@ -1005,6 +1099,75 @@ public class Ventana2 extends javax.swing.JFrame {
     private void SeleccionadoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SeleccionadoButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_SeleccionadoButtonActionPerformed
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "ComoJugarItem".
+     * Muestra un mensaje informativo con los integrantes del grupo.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
+    private void ComoJugarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComoJugarItemActionPerformed
+    String mensaje = """
+                     Descubre todas las casillas del tablero que no contienen minas y marca las casillas sospechosas con banderas para indicar la posible ubicacion de minas.
+                     
+                     1. Inicio del Juego:
+                        - Al iniciar el juego, veras un tablero compuesto por casillas cubiertas.
+                        - Seleccionando al pala y haciendo clic en una casilla, se descubrira su contenido.
+                     
+                     2. Casillas Vacias:
+                        - Si la casilla esta vacia, se revelara el numero de minas adyacentes.
+                        - Las casillas adyacentes pueden ser horizontales, verticales o diagonales.
+                     
+                     3. Descubrimiento Automatico:
+                        - Si la casilla seleccionada no contiene minas y esta vacia, el juego revelara automaticamente las casillas adyacentes que tambien esten vacias, creando areas seguras.
+                     
+                     4. Casillas con Minas:
+                        - Si la casilla contiene una mina, el juego terminara y habras perdido.
+                     
+                     5. Marcado de Casillas:
+                        - Puedes marcar las casillas que sospechas contienen minas seleccionando la bandera y haciendo click a la mina.
+                        - Esto colocara una bandera en la casilla seleccionada.
+                     
+                     6. Ganador:
+                        - Ganas el juego si logras descubrir todas las casillas que no contienen minas sin detonar ninguna.
+                     
+                     Buena suerte y diviertete jugando Buscaminas!""";
+        JOptionPane.showMessageDialog(this, mensaje);
+    }//GEN-LAST:event_ComoJugarItemActionPerformed
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "CreditosItem".
+     * Muestra un mensaje informativo con los integrantes del grupo.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
+    private void CreditosItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreditosItemActionPerformed
+        JOptionPane.showMessageDialog(this, "Integrantes del grupo\nLuis Guerra y Zadkiel Avedaño");
+    }//GEN-LAST:event_CreditosItemActionPerformed
+
+     /**
+     * Método que se ejecuta cuando se hace clic en el botón "cargar" o se usa el comando 'Ctrl+O'. Este
+     * botón permite cargar una partida desde un archivo CSV.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
+    private void CargarPartidaItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarPartidaItemActionPerformed
+        juegoCargado();
+    }//GEN-LAST:event_CargarPartidaItemActionPerformed
+     /**
+     * Método que se ejecuta cuando se hace clic en el botón "guardar" o se usa el comando 'Ctrl+S'. Este
+     * botón permite guardar una partida en un archivo CSV.
+     *
+     * @param evt El evento de acción generado por el clic en el botón.
+     */
+    private void GuardarPartidaItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarPartidaItemActionPerformed
+        guardarJuego();
+    }//GEN-LAST:event_GuardarPartidaItemActionPerformed
+
+    private void NuevaPartidaItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NuevaPartidaItemActionPerformed
+        juegoTerminado = false;
+        pala.setEnabled(true);
+        bandera.setEnabled(true);
+        juegoNuevo();
+    }//GEN-LAST:event_NuevaPartidaItemActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -1033,7 +1196,12 @@ public class Ventana2 extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem CargarPartidaItem;
+    private javax.swing.JMenuItem ComoJugarItem;
+    private javax.swing.JMenuItem CreditosItem;
     private javax.swing.ButtonGroup GrupoBotones;
+    private javax.swing.JMenuItem GuardarPartidaItem;
+    private javax.swing.JMenuItem NuevaPartidaItem;
     private javax.swing.JButton SeleccionadoButton;
     private javax.swing.JLabel SeleccionadoText;
     private javax.swing.JButton arbol;
@@ -1060,6 +1228,9 @@ public class Ventana2 extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
