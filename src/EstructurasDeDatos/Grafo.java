@@ -319,7 +319,7 @@ public class Grafo {
             NodoAdyacencia nodo = vecinos.cabeza;
             while (nodo != null) {
                 Casilla vecino = nodo.valor;
-                if (!vecino.isAbierta() && !vecino.isMina()) {
+                if (!vecino.isAbierta() && !vecino.isMina() && !vecino.isBandera()) {
                     marcarCasillaAbierta(vecino.getPosFila(), vecino.getPosColumna());
                     eventoCasillaAbierta.ejecutar(vecino);
                     if (vecino.getNumMinasAlrededor() == 0) {
@@ -351,7 +351,7 @@ public class Grafo {
 
             while (nodo != null) {
                 Casilla vecino = nodo.valor;
-                if (!vecino.isAbierta() && !vecino.isMina()) {
+                if (!vecino.isAbierta() && !vecino.isMina() && !vecino.isBandera()) {
                     marcarCasillaAbierta(vecino.getPosFila(), vecino.getPosColumna());
                     eventoCasillaAbierta.ejecutar(vecino);
                     if (vecino.getNumMinasAlrededor() == 0) {

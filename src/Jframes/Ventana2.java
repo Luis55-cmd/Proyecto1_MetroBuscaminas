@@ -191,26 +191,29 @@ public class Ventana2 extends javax.swing.JFrame {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
     }
-    
+
     /**
-     * Abre un cuadro de diálogo para cargar un archivo CSV que contiene el estado de un juego guardado.
-     * Restablece los botones del menú y la interfaz de usuario, y carga el estado del juego desde el archivo.
-     * 
-     * @throws HeadlessException si el código está en un entorno de servidor y no hay interfaz gráfica disponible.
-     * @throws NumberFormatException si los datos del archivo CSV no pueden ser convertidos a números.
+     * Abre un cuadro de diálogo para cargar un archivo CSV que contiene el
+     * estado de un juego guardado. Restablece los botones del menú y la
+     * interfaz de usuario, y carga el estado del juego desde el archivo.
+     *
+     * @throws HeadlessException si el código está en un entorno de servidor y
+     * no hay interfaz gráfica disponible.
+     * @throws NumberFormatException si los datos del archivo CSV no pueden ser
+     * convertidos a números.
      * @throws IOException si ocurre un error al leer el archivo CSV.
      */
-    
-    
     /**
-    * Guarda el estado actual del juego en un archivo CSV seleccionado por el usuario.
-    * Muestra un cuadro de diálogo para seleccionar la ubicación y el nombre del archivo.
-    * Incluye la configuración del tablero y el estado de cada casilla.
-    * 
-    * @throws HeadlessException si el código está en un entorno de servidor y no hay interfaz gráfica disponible.
-    * @throws IOException si ocurre un error al guardar el archivo CSV.
-    */
-    private void guardarJuego(){
+     * Guarda el estado actual del juego en un archivo CSV seleccionado por el
+     * usuario. Muestra un cuadro de diálogo para seleccionar la ubicación y el
+     * nombre del archivo. Incluye la configuración del tablero y el estado de
+     * cada casilla.
+     *
+     * @throws HeadlessException si el código está en un entorno de servidor y
+     * no hay interfaz gráfica disponible.
+     * @throws IOException si ocurre un error al guardar el archivo CSV.
+     */
+    private void guardarJuego() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
         fileChooser.setFileFilter(filtro);
@@ -241,9 +244,9 @@ public class Ventana2 extends javax.swing.JFrame {
             }
         }
     }
-    
-    private void juegoCargado(){
-        
+
+    private void juegoCargado() {
+
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv");
         fileChooser.setFileFilter(filtro);
@@ -286,10 +289,7 @@ public class Ventana2 extends javax.swing.JFrame {
                     casilla.setAbierta(esAbierta);
                     casilla.setNumMinasAlrededor(numMinas);
                     tableroCargado[fila][columna] = casilla;
-
-                    if (esBandera) {
-                        contador++;
-                    }
+                    
                 }
 
                 // Actualizar interfaz
@@ -298,6 +298,8 @@ public class Ventana2 extends javax.swing.JFrame {
                 descargarControles();
                 cargarCasillas(filas, columnas);
                 cargarTableroBuscaminas(filas, columnas, minas, tableroCargado);
+                System.out.println(contador);
+                System.out.println(minas);
                 banderas.setText("Banderas: " + (minas - contador));
                 repaint();
 
@@ -1106,7 +1108,7 @@ public class Ventana2 extends javax.swing.JFrame {
      * @param evt El evento de acción generado por el clic en el botón.
      */
     private void ComoJugarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComoJugarItemActionPerformed
-    String mensaje = """
+        String mensaje = """
                      Descubre todas las casillas del tablero que no contienen minas y marca las casillas sospechosas con banderas para indicar la posible ubicacion de minas.
                      
                      1. Inicio del Juego:
@@ -1143,18 +1145,20 @@ public class Ventana2 extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Integrantes del grupo\nLuis Guerra y Zadkiel Avedaño");
     }//GEN-LAST:event_CreditosItemActionPerformed
 
-     /**
-     * Método que se ejecuta cuando se hace clic en el botón "cargar" o se usa el comando 'Ctrl+O'. Este
-     * botón permite cargar una partida desde un archivo CSV.
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "cargar" o se usa
+     * el comando 'Ctrl+O'. Este botón permite cargar una partida desde un
+     * archivo CSV.
      *
      * @param evt El evento de acción generado por el clic en el botón.
      */
     private void CargarPartidaItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarPartidaItemActionPerformed
         juegoCargado();
     }//GEN-LAST:event_CargarPartidaItemActionPerformed
-     /**
-     * Método que se ejecuta cuando se hace clic en el botón "guardar" o se usa el comando 'Ctrl+S'. Este
-     * botón permite guardar una partida en un archivo CSV.
+    /**
+     * Método que se ejecuta cuando se hace clic en el botón "guardar" o se usa
+     * el comando 'Ctrl+S'. Este botón permite guardar una partida en un archivo
+     * CSV.
      *
      * @param evt El evento de acción generado por el clic en el botón.
      */
