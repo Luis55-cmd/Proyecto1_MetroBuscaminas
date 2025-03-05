@@ -585,31 +585,7 @@ public class Grafo {
         }
     }
 
-    /*
-    public void seleccionarCasilla(int posFila, int posColumna) {
-        if (!this.generacionMinas) {
-            this.generarMinas(posFila, posColumna);
-        }
-        eventoCasillaAbierta.accept(this.casillas[posFila][posColumna]);
-        if (this.casillas[posFila][posColumna].isMina()) {
-            eventoPartidaPerdida.accept(obtenerCasillasConMinas());
-        } else if (this.casillas[posFila][posColumna].getNumMinasAlrededor() == 0) {
-            marcarCasillaAbierta(posFila, posColumna);
-            List<Casilla> casillasAlrededor = obtenerCasillasAlrededor(posFila, posColumna);
-            for (Casilla casilla : casillasAlrededor) {
-                if (!casilla.isAbierta()) {
-                    seleccionarCasilla(casilla.getPosFila(), casilla.getPosColumna());
-                }
-            }
-        } else {
-            marcarCasillaAbierta(posFila, posColumna);
-        }
-        if (partidaGanada()) {
-            eventoPartidaGanada.accept(obtenerCasillasConMinas());
-        }
-    }
-
-     */
+    
 
     /**
      * Selecciona una casilla para colocar o retirar una bandera.
